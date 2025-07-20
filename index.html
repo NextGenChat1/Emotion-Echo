@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emotion Echo</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      background: linear-gradient(to right, #e0c3fc, #8ec5fc);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      color: #6a11cb;
+    }
+    .form-group {
+      margin: 15px 0;
+    }
+    input, select, button {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      width: 80%;
+      max-width: 400px;
+      margin-top: 5px;
+      font-size: 1em;
+    }
+    button {
+      background-color: #6a11cb;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>💬 Emotion Echo</h1>
+  <p>Answer 5 quick questions and see what your heart wants to say...</p>
+
+  <div id="form">
+    <div class="form-group">
+      <label>1. How are you feeling today?</label><br>
+      <select id="feeling">
+        <option>Lonely</option>
+        <option>Happy</option>
+        <option>Confused</option>
+        <option>Heartbroken</option>
+        <option>Calm</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>2. Are you with someone or alone?</label><br>
+      <select id="alone">
+        <option>Alone</option>
+        <option>With someone</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>3. What do you feel you're missing?</label><br>
+      <input type="text" id="missing" placeholder="Love, support, peace...">
+    </div>
+
+    <div class="form-group">
+      <label>4. One word for your pain?</label><br>
+      <input type="text" id="pain" placeholder="Empty, loud, dark...">
+    </div>
+
+    <div class="form-group">
+      <label>5. If you could say something to your future self?</label><br>
+      <input type="text" id="future" placeholder="I hope you're okay...">
+    </div>
+
+    <button onclick="generate()">✨ Reveal My Echo</button>
+  </div>
+
+  <div id="result">
+    <h2>Your Emotion Echo 🎧</h2>
+    <p id="output"></p>
+    <button onclick="copyEcho()">📋 Copy Message</button>
+  </div>
+
+  <script>
+    function generate() {
+      const feeling = document.getElementById("feeling").value;
+      const alone = document.getElementById("alone").value;
+      const missing = document.getElementById("missing").value;
+      const pain = document.getElementById("pain").value;
+      const future = document.getElementById("future").value;
+
+      const message = `You're feeling ${feeling.toLowerCase()} and ${alone.toLowerCase()}. Your heart misses "${missing}". Inside, your pain feels "${pain}". 
+But even now, there's a voice in you that says: "${future}". 
+Hold on — your emotions are real, and you matter. 💜`;
+
+      document.getElementById("output").innerText = message;
+      document.getElementById("result").style.display = "block";
+    }
+
+    function copyEcho() {
+      const text = document.getElementById("output").innerText;
+      navigator.clipboard.writeText(text);
+      alert("Message copied!");
+    }
+  </script>
+</body>
+</html>
