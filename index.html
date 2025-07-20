@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Emotion Echo - Back & Random Questions</title>
+<title>Emotion Echo - Multi Questions</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -12,14 +12,19 @@
     display: flex; flex-direction: column; align-items: center;
   }
   h1 { color: #0984e3; }
-  #questionArea, #result, #shareDownload, #story, #quote, #chartArea {
+  #container {
     background: white; border-radius: 10px; padding: 20px; margin: 15px 0;
-    max-width: 400px; width: 100%;
+    max-width: 420px; width: 100%;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
-  button {
-    margin: 5px;
-    padding: 10px 18px;
+  #questionText {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    min-height: 60px;
+  }
+  .answer-btn {
+    margin: 6px 8px 6px 0;
+    padding: 10px 20px;
     font-size: 16px;
     border: none;
     border-radius: 8px;
@@ -28,18 +33,45 @@
     cursor: pointer;
     transition: background 0.3s;
   }
-  button:hover {
+  .answer-btn.selected {
+    background: #00b894;
+  }
+  .answer-btn:hover:not(.selected) {
     background: #74b9ff;
   }
+  #navButtons {
+    margin-top: 20px;
+    display: flex; justify-content: space-between;
+  }
+  #navButtons button {
+    padding: 10px 18px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #0984e3;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100px;
+  }
+  #navButtons button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  #result, #story, #quote {
+    margin-top: 20px;
+    font-size: 1em;
+    color: #2d3436;
+  }
   .emoji {
-    font-size: 48px;
-    animation: popin 0.5s ease forwards;
+    font-size: 50px;
     position: fixed;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
     user-select: none;
+    animation: popin 1s ease forwards;
     z-index: 9999;
   }
   @keyframes popin {
@@ -47,76 +79,44 @@
     50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
     100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
   }
-  #shareDownload button {
-    background: #00b894;
-  }
-  #chartArea canvas {
-    max-width: 100%;
-  }
-  #navButtons {
-    display: flex;
-    justify-content: center;
-  }
-  #navButtons button {
-    width: 100px;
-  }
 </style>
 </head>
 <body>
 
 <h1>Emotion Echo 🔮</h1>
 
-<div id="questionArea">
-  <div id="questionText">How are you feeling right now?</div>
-  <div>
-    <button data-answer="Happy">😊 Happy</button>
-    <button data-answer="Sad">😢 Sad</button>
-    <button data-answer="Calm">😌 Calm</button>
+<div id="container">
+  <div id="questionText">Loading question...</div>
+  <div id="answers">
+    <!-- answer buttons will be here -->
   </div>
+
   <div id="navButtons">
     <button id="backBtn" disabled>⬅️ Back</button>
+    <button id="nextBtn" disabled>Next ➡️</button>
   </div>
+
+  <div id="result" style="display:none; white-space: pre-line;"></div>
+  <div id="story" style="display:none; font-style: italic; color: #2d3436;"></div>
+  <div id="quote" style="display:none; font-weight: 600; color: #0984e3; margin-top: 10px;"></div>
 </div>
-
-<div id="result" style="display:none; white-space: pre-line;"></div>
-
-<div id="story" style="display:none; font-style: italic; color: #2d3436;"></div>
-
-<div id="quote" style="display:none; font-weight: 600; color: #0984e3; margin-top: 10px;"></div>
-
-<div id="shareDownload" style="display:none; margin-top: 15px;">
-  <button id="shareBtn">Share Your Echo</button>
-</div>
-
-<div id="chartArea" style="display:none; margin-top: 25px;">
-  <canvas id="emotionChart" width="400" height="300"></canvas>
-</div>
-
-<audio id="bgMusic" loop></audio>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  // All possible questions
-  const allQuestions = [
+  const questions = [
     "How are you feeling right now?",
     "What’s your biggest emotion today?",
     "Describe your mood in one word.",
     "What made you smile recently?",
     "What emotion is strongest in you today?",
-    "How would you rate your energy right now?",
-    "What color matches your current feeling?",
-    "If your mood was weather, what would it be?",
-    "Which word best describes your heart now?",
-    "What’s the vibe you want to carry today?"
+    "How would you rate your energy right now?"
   ];
 
-  const dailyQuotes = [
-    "Every day is a new beginning. Take a deep breath and start again.",
-    "Your emotions are your superpower — embrace them.",
-    "Happiness often sneaks in through a door you didn’t know you left open.",
-    "Calmness is the cradle of power.",
-    "Sadness is but a wall between two gardens."
+  const answersOptions = [
+    { label: "Happy", emoji: "😊" },
+    { label: "Sad", emoji: "😢" },
+    { label: "Calm", emoji: "😌" },
+    { label: "Excited", emoji: "🤩" },
+    { label: "Tired", emoji: "😴" }
   ];
 
   const stories = [
@@ -127,153 +127,103 @@
     "Behind every tear is a story waiting to bloom into strength."
   ];
 
-  const emojiMap = {
-    Happy: "😊",
-    Sad: "😢",
-    Calm: "😌"
-  };
-
-  const musicMap = {
-    Happy: "https://cdn.pixabay.com/download/audio/2022/03/28/audio_7a3e2fba46.mp3?filename=summer-happiness-5987.mp3",
-    Sad: "https://cdn.pixabay.com/download/audio/2021/10/11/audio_40a3e27a3e.mp3?filename=soft-piano-ambient-10866.mp3",
-    Calm: "https://cdn.pixabay.com/download/audio/2022/04/12/audio_4c7b3f162a.mp3?filename=calm-instrumental-10975.mp3"
-  };
+  const dailyQuotes = [
+    "Every day is a new beginning. Take a deep breath and start again.",
+    "Your emotions are your superpower — embrace them.",
+    "Happiness often sneaks in through a door you didn’t know you left open.",
+    "Calmness is the cradle of power.",
+    "Sadness is but a wall between two gardens."
+  ];
 
   const questionText = document.getElementById("questionText");
-  const questionArea = document.getElementById("questionArea");
-  const resultEl = document.getElementById("result");
-  const storyEl = document.getElementById("story");
-  const quoteEl = document.getElementById("quote");
-  const shareDownload = document.getElementById("shareDownload");
-  const shareBtn = document.getElementById("shareBtn");
-  const bgMusic = document.getElementById("bgMusic");
-  const chartArea = document.getElementById("chartArea");
+  const answersDiv = document.getElementById("answers");
   const backBtn = document.getElementById("backBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const resultDiv = document.getElementById("result");
+  const storyDiv = document.getElementById("story");
+  const quoteDiv = document.getElementById("quote");
 
-  let answers = [];
-  let questionIndices = [];
-  let currentQIndex = 0;
+  let currentIndex = 0;
+  const userAnswers = [];
 
-  // Utility: get a random index from allQuestions excluding given indices
-  function getRandomQuestionIndex(excludeIndices) {
-    const available = allQuestions
-      .map((q,i) => i)
-      .filter(i => !excludeIndices.includes(i));
-    if(available.length === 0) return null;
-    return available[Math.floor(Math.random() * available.length)];
-  }
-
-  // Initialize questions array with unique random questions equal to desired length (e.g. 5)
-  function initQuestions(num = 5) {
-    questionIndices = [];
-    while(questionIndices.length < num) {
-      let idx = getRandomQuestionIndex(questionIndices);
-      if(idx === null) break;
-      questionIndices.push(idx);
-    }
-  }
-
-  // Load saved answers and questionIndices from localStorage or start fresh
-  function loadSaved() {
-    const savedAnswers = localStorage.getItem('emotionEchoAnswers');
-    const savedQIndices = localStorage.getItem('emotionEchoQIndices');
-    const savedCurrent = localStorage.getItem('emotionEchoCurrent');
-
-    if(savedAnswers && savedQIndices && savedCurrent !== null) {
-      answers = JSON.parse(savedAnswers);
-      questionIndices = JSON.parse(savedQIndices);
-      currentQIndex = parseInt(savedCurrent,10);
-      if(answers.length === questionIndices.length && answers.length > 0) {
-        showResult();
-        return true;
-      }
-      updateQuestion();
-      updateNavButtons();
-      return true;
-    }
-    return false;
-  }
-
-  // Save to localStorage
-  function saveAll() {
-    localStorage.setItem('emotionEchoAnswers', JSON.stringify(answers));
-    localStorage.setItem('emotionEchoQIndices', JSON.stringify(questionIndices));
-    localStorage.setItem('emotionEchoCurrent', currentQIndex.toString());
-  }
-
-  // Show current question text
-  function updateQuestion() {
-    questionText.innerText = allQuestions[questionIndices[currentQIndex]] || "How are you feeling?";
-    // Highlight selected answer if exists
-    document.querySelectorAll('#questionArea button').forEach(btn => {
-      btn.style.backgroundColor = "#0984e3";
-      btn.style.color = "white";
-      if(answers[currentQIndex] === btn.dataset.answer) {
-        btn.style.backgroundColor = "#00b894";
-        btn.style.color = "white";
-      }
-    });
-  }
-
-  // Show/hide back button properly
-  function updateNavButtons() {
-    backBtn.disabled = currentQIndex === 0;
-  }
-
-  // Show animated emoji reaction
   function showEmoji(emoji) {
     const e = document.createElement("div");
     e.className = "emoji";
-    e.innerText = emoji;
+    e.textContent = emoji;
     document.body.appendChild(e);
     setTimeout(() => e.remove(), 1200);
   }
 
-  // Play background music by mood
-  function playMusic(mood) {
-    if(musicMap[mood]) {
-      bgMusic.src = musicMap[mood];
-      bgMusic.volume = 0.15;
-      bgMusic.play();
+  function loadQuestion(index) {
+    questionText.textContent = questions[index];
+    answersDiv.innerHTML = "";
+    nextBtn.disabled = true;
+
+    answersOptions.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "answer-btn";
+      btn.textContent = `${opt.emoji} ${opt.label}`;
+      btn.dataset.answer = opt.label;
+      if(userAnswers[index] === opt.label) {
+        btn.classList.add("selected");
+        nextBtn.disabled = false;
+      }
+      btn.onclick = () => {
+        userAnswers[index] = opt.label;
+        Array.from(answersDiv.children).forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        nextBtn.disabled = false;
+        showEmoji(opt.emoji);
+      };
+      answersDiv.appendChild(btn);
+    });
+
+    backBtn.disabled = index === 0;
+  }
+
+  backBtn.onclick = () => {
+    if(currentIndex > 0) {
+      currentIndex--;
+      loadQuestion(currentIndex);
     }
-  }
+  };
 
-  // Show daily quote randomly
-  function showQuote() {
-    const q = dailyQuotes[Math.floor(Math.random() * dailyQuotes.length)];
-    quoteEl.innerText = q;
-    quoteEl.style.display = "block";
-  }
+  nextBtn.onclick = () => {
+    if(!userAnswers[currentIndex]) return; // ensure answer selected
 
-  // Show final result with story & chart
-  function showResult() {
-    questionArea.style.display = "none";
-    resultEl.style.display = "block";
-    shareDownload.style.display = "block";
-    chartArea.style.display = "block";
-
-    let resultText = "Your Emotion Echo:\n\n";
-    for(let i = 0; i < questionIndices.length; i++) {
-      const qText = allQuestions[questionIndices[i]] || "";
-      const ans = answers[i] || "No answer";
-      resultText += `${qText}\n→ ${ans}\n\n`;
+    if(currentIndex < questions.length - 1) {
+      currentIndex++;
+      loadQuestion(currentIndex);
+    } else {
+      showResults();
     }
-    resultEl.innerText = resultText;
+  };
 
-    const randomStory = stories[Math.floor(Math.random() * stories.length)];
-    storyEl.innerText = randomStory;
-    storyEl.style.display = "block";
+  function showResults() {
+    document.getElementById("container").style.maxWidth = "600px";
+    questionText.style.display = "none";
+    answersDiv.style.display = "none";
+    backBtn.style.display = "none";
+    nextBtn.style.display = "none";
 
-    drawChart();
+    let summary = "Your Emotion Echo Summary:\n\n";
+    questions.forEach((q, i) => {
+      summary += `${q}\n→ ${userAnswers[i] || "No answer"}\n\n`;
+    });
+    resultDiv.textContent = summary;
+    resultDiv.style.display = "block";
+
+    const story = stories[Math.floor(Math.random() * stories.length)];
+    storyDiv.textContent = story;
+    storyDiv.style.display = "block";
+
+    const quote = dailyQuotes[Math.floor(Math.random() * dailyQuotes.length)];
+    quoteDiv.textContent = quote;
+    quoteDiv.style.display = "block";
   }
 
-  // Draw simple pie chart of emotions count
-  function drawChart() {
-    const ctx = document.getElementById('emotionChart').getContext('2d');
-    const counts = { Happy:0, Sad:0, Calm:0 };
-    answers.forEach(a => { if(counts[a] !== undefined) counts[a]++; });
-    const data = {
-      labels: ['Happy', 'Sad', 'Calm'],
-      datasets: [{
-        data: [counts.Happy, counts.Sad, counts.Calm],
-        backgroundColor: ['#00b894', '#d63031', '#
+  loadQuestion(currentIndex);
+</script>
+
+</body>
+</html>
