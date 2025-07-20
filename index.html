@@ -1,208 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Zyntra Echo World 🌌</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #2e2f4f, #1c1b29);
-      color: #f4f4f4;
-    }
-    header {
-      padding: 20px;
-      text-align: center;
-      background: #1a1928;
-      font-size: 28px;
-      font-weight: bold;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<title>Zyntra Echo World 2.0 🌌</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; 
+    font-family: 'Poppins', sans-serif;
+    color: #eee;
+    background: #222;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background 1s ease;
+  }
+  header {
+    text-align: center;
+    padding: 18px 12px;
+    font-size: 26px;
+    font-weight: 600;
+    background: #1a1a2e;
+    user-select: none;
+    letter-spacing: 1px;
+  }
+  nav {
+    display: flex;
+    justify-content: space-around;
+    background: #272742;
+  }
+  nav button {
+    flex: 1;
+    padding: 12px 0;
+    background: transparent;
+    border: none;
+    color: #ccc;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  nav button.active, nav button:hover {
+    background: #3f3f72;
+    color: #fff;
+  }
+  main {
+    flex: 1;
+    padding: 20px 15px;
+  }
+  section {
+    display: none;
+  }
+  section.active {
+    display: block;
+  }
+  label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+  input[type=text], textarea {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    background: #333355;
+    color: #ddd;
+    resize: vertical;
+    min-height: 40px;
+    margin-bottom: 15px;
+  }
+  textarea {
+    min-height: 80px;
+  }
+  button.action {
+    background: #4a90e2;
+    border: none;
+    padding: 12px 20px;
+    color: white;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.3s ease;
+  }
+  button.action:hover {
+    background: #357abd;
+  }
+  .output {
+    background: rgba(0,0,0,0.45);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 18px;
+    line-height: 1.4;
+    min-height: 70px;
+    white-space: pre-line;
+  }
+  #musicToggle {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: #4a90e2;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 18px;
+    color: white;
+    z-index: 999;
+    user-select: none;
+  }
+  .share-buttons {
+    margin-top: 14px;
+    display: flex;
+    gap: 12px;
+  }
+  .share-buttons button {
+    background: #3b3b6e;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 600;
+    flex: 1;
+    user-select: none;
+  }
+  .share-buttons button:hover {
+    background: #5661b1;
+  }
+  /* Mood backgrounds */
+  body.mood-happy {
+    background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
+    color: #222;
+  }
+  body.mood-sad {
+    background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+    color: #eee;
+  }
+  body.mood-calm {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #eee;
+  }
+  body.mood-excited {
+    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+    color: #222;
+  }
+  /* Mobile app style */
+  @media (max-width: 600px) {
     nav {
-      display: flex;
-      justify-content: space-around;
-      background: #27263a;
-      padding: 10px;
+      overflow-x: auto;
     }
-    nav button, .action, #musicToggle {
-      background: #403e5c;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 5px;
+    nav button {
+      flex: none;
+      padding: 14px 20px;
+      font-size: 15px;
     }
-    nav button:hover, .action:hover {
-      background: #5d5c81;
-    }
-    section {
-      display: none;
-      padding: 30px;
-    }
-    section.active {
-      display: block;
-    }
-    textarea, input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-    .output {
-      margin-top: 20px;
-      padding: 15px;
-      background: #33314c;
-      border-radius: 5px;
-    }
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #1a1928;
-      font-size: 14px;
-      color: #aaa;
-    }
-    #musicToggle {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 999;
-      background: #0099cc;
-    }
-  </style>
+  }
+</style>
 </head>
-<body>
+<body class="mood-calm">
 
-<header>Zyntra Echo World 🌌</header>
+<header>Zyntra Echo World 2.0 🌌</header>
 
 <nav>
-  <button onclick="showSection('emotion')">Emotion Echo</button>
-  <button onclick="showSection('inner')">Inner Voice</button>
-  <button onclick="showSection('future')">Future Letter</button>
-  <button onclick="showSection('oracle')">Trend Oracle</button>
-  <button onclick="showSection('quote')">Quote & Music</button>
+  <button class="active" data-section="emotion">Emotion Echo</button>
+  <button data-section="inner">Inner Voice</button>
+  <button data-section="future">Future Letter</button>
+  <button data-section="oracle">Trend Oracle</button>
+  <button data-section="quote">Quote & Music</button>
 </nav>
 
-<button id="musicToggle" onclick="toggleMusic()">🔊 Music On</button>
+<button id="musicToggle" aria-label="Toggle background music">🔈 Music On</button>
 
-<section id="emotion" class="active">
-  <h2>🎭 Emotion Echo</h2>
-  <p>Answer this: What kind of day are you having?</p>
-  <input type="text" id="emotionInput" placeholder="e.g. Tired but hopeful">
-  <button class="action" onclick="generateEcho()">Reveal My Echo</button>
-  <div class="output" id="emotionOutput"></div>
-</section>
+<main>
+  <section id="emotion" class="active" aria-label="Emotion Echo Section">
+    <label id="emotionQuestionLabel" for="emotionInput">How are you feeling today?</label>
+    <input type="text" id="emotionInput" placeholder="e.g. Happy, anxious, excited" autocomplete="off" />
+    <button class="action" id="emotionBtn">Reveal My Echo</button>
+    <div class="output" id="emotionOutput" aria-live="polite" aria-atomic="true"></div>
+    <div class="share-buttons" id="emotionShare"></div>
+  </section>
 
-<section id="inner">
-  <h2>🧠 Inner Voice</h2>
-  <p>Type a thought or feeling. Hear your hidden voice reply.</p>
-  <textarea id="innerInput" placeholder="I'm feeling stuck..."></textarea>
-  <button class="action" onclick="innerVoice()">Reveal Inner Thought</button>
-  <div class="output" id="innerOutput"></div>
-</section>
+  <section id="inner" aria-label="Inner Voice Section">
+    <label for="innerInput">Share a thought or feeling:</label>
+    <textarea id="innerInput" placeholder="I'm feeling stuck..." autocomplete="off"></textarea>
+    <button class="action" id="innerBtn">Reveal Inner Thought</button>
+    <div class="output" id="innerOutput" aria-live="polite" aria-atomic="true"></div>
+    <div class="share-buttons" id="innerShare"></div>
+  </section>
 
-<section id="future">
-  <h2>📩 Future Letter</h2>
-  <p>Write a message to your future self.</p>
-  <textarea id="futureInput" placeholder="Dear future me, I hope you..."></textarea>
-  <button class="action" onclick="futureLetter()">Create Letter</button>
-  <div class="output" id="futureOutput"></div>
-</section>
+  <section id="future" aria-label="Future Letter Section">
+    <label for="futureInput">Write a message to your future self:</label>
+    <textarea id="futureInput" placeholder="Dear future me, I hope you..." autocomplete="off"></textarea>
+    <button class="action" id="futureBtn">Create Letter</button>
+    <div class="output" id="futureOutput" aria-live="polite" aria-atomic="true"></div>
+    <div class="share-buttons" id="futureShare"></div>
+  </section>
 
-<section id="oracle">
-  <h2>🔮 Trend Oracle</h2>
-  <p>Answer: What’s your hidden talent?</p>
-  <input type="text" id="oracleInput" placeholder="e.g. Making people laugh">
-  <button class="action" onclick="trendOracle()">Predict My Future</button>
-  <div class="output" id="oracleOutput"></div>
-</section>
+  <section id="oracle" aria-label="Trend Oracle Section">
+    <label id="oracleQuestionLabel" for="oracleInput">What’s your hidden talent?</label>
+    <input type="text" id="oracleInput" placeholder="e.g. Making people laugh" autocomplete="off" />
+    <button class="action" id="oracleBtn">Predict My Future</button>
+    <div class="output" id="oracleOutput" aria-live="polite" aria-atomic="true"></div>
+    <div class="share-buttons" id="oracleShare"></div>
+  </section>
 
-<section id="quote">
-  <h2>🎨 Quote & Music</h2>
-  <p>One click to get a beautiful quote + music vibe.</p>
-  <button class="action" onclick="quoteGenerator()">Generate Quote</button>
-  <div class="output" id="quoteOutput"></div>
-</section>
+  <section id="quote" aria-label="Quote & Music Section">
+    <button class="action" id="quoteBtn">Generate Quote & Download</button>
+    <div class="output" id="quoteOutput" aria-live="polite" aria-atomic="true"></div>
+    <div class="share-buttons" id="quoteShare"></div>
+  </section>
+</main>
 
-<footer>
-  Created by You • Powered by Your Ideas 💡 | Zyntra Echo World © 2025
-</footer>
-
-<audio id="bgMusic" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-  Your browser does not support audio.
-</audio>
+<audio id="bgMusic" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_d786a9724e.mp3?filename=calm-music-ambient-11144.mp3"></audio>
 
 <script>
-  function showSection(id) {
-    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+  // Sections and nav buttons
+  const navButtons = document.querySelectorAll('nav button');
+  const sections = document.querySelectorAll('main section');
+  function setActiveSection(id) {
+    sections.forEach(sec => sec.classList.remove('active'));
+    navButtons.forEach(btn => btn.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    [...navButtons].find(b => b.dataset.section === id).classList.add('active');
   }
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => setActiveSection(btn.dataset.section));
+  });
 
+  // Speech function
   function speak(text) {
+    if (!text) return;
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+    }
     const utter = new SpeechSynthesisUtterance(text);
     utter.rate = 1;
     utter.pitch = 1.1;
-    speechSynthesis.speak(utter);
+    window.speechSynthesis.speak(utter);
   }
 
-  function generateEcho() {
-    const input = document.getElementById('emotionInput').value;
-    const msg = `"${input}" — sometimes even storms know how to dance. 🌧️💃`;
-    document.getElementById('emotionOutput').innerText = msg;
-    speak(msg);
-  }
-
-  function innerVoice() {
-    const input = document.getElementById('innerInput').value;
-    const msg = `Your inner voice says: "What you're feeling is real — but you're stronger than it." 💭`;
-    document.getElementById('innerOutput').innerText = msg;
-    speak(msg);
-  }
-
-  function futureLetter() {
-    const input = document.getElementById('futureInput').value;
-    const msg = `✨ Future Letter ✨\n\n"${input}"\n\n💌 We'll keep growing. The future you is already proud.`;
-    document.getElementById('futureOutput').innerText = msg;
-    speak(msg);
-  }
-
-  function trendOracle() {
-    const input = document.getElementById('oracleInput').value;
-    const msg = `🔮 Prediction: Your talent for "${input}" will become the reason people remember your name. ✨`;
-    document.getElementById('oracleOutput').innerText = msg;
-    speak(msg);
-  }
-
-  function quoteGenerator() {
-    const quotes = [
-      `"Let your silence be louder than your fears." 🎵`,
-      `"Not all who wander are lost — some are just creating magic."`,
-      `"The stars are watching. You’re not alone." 🌌`,
-      `"Your vibe writes your future — don’t dim it." ✨`
-    ];
-    const pick = quotes[Math.floor(Math.random() * quotes.length)];
-    document.getElementById('quoteOutput').innerText = pick;
-    speak(pick);
-  }
-
-  let isMusicPlaying = false;
-  const music = document.getElementById("bgMusic");
-  const toggleBtn = document.getElementById("musicToggle");
-
-  function toggleMusic() {
-    if (isMusicPlaying) {
-      music.pause();
-      toggleBtn.innerText = "🔇 Music Off";
-    } else {
-      music.play();
-      toggleBtn.innerText = "🔊 Music On";
-    }
-    isMusicPlaying = !isMusicPlaying;
-  }
-</script>
-
-</body>
-</html>
+  // Background music toggle
