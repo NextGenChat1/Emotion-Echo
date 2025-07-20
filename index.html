@@ -1,363 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Emotion Echo - Stylish Interactive</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-  body {
-    margin:0; padding:0; font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  header {
-    padding: 20px;
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    user-select: none;
-    text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
-  }
-  #question-container {
-    background: rgba(255 255 255 / 0.1);
-    border-radius: 15px;
-    padding: 25px 35px;
-    margin: 10px;
-    max-width: 500px;
-    text-align: center;
-    box-shadow: 0 0 30px rgba(0,0,0,0.2);
-  }
-  #question {
-    font-size: 1.3rem;
-    margin-bottom: 20px;
-    min-height: 60px;
-  }
-  .btn-group {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-  }
-  button {
-    background: #5a3ea1;
-    border: none;
-    padding: 12px 22px;
-    border-radius: 25px;
-    font-weight: 600;
-    font-size: 1rem;
-    color: #fff;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    box-shadow: 0 4px 15px rgba(90, 62, 161, 0.4);
-  }
-  button:hover {
-    background: #8a63d2;
-    box-shadow: 0 6px 20px rgba(138, 99, 210, 0.7);
-  }
-  #result-container {
-    margin-top: 25px;
-    max-width: 600px;
-    text-align: center;
-  }
-  #result-text {
-    font-size: 1.3rem;
-    margin-bottom: 15px;
-    font-style: italic;
-    white-space: pre-line;
-    text-shadow: 1px 1px 8px rgba(0,0,0,0.5);
-  }
-  #story {
-    background: rgba(255 255 255 / 0.15);
-    padding: 18px 25px;
-    border-radius: 15px;
-    font-size: 1rem;
-    max-height: 130px;
-    overflow-y: auto;
-    margin-bottom: 15px;
-    white-space: pre-line;
-  }
-  #controls {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-  #share-buttons button, #download-quote {
-    background: #ff5f6d;
-    border-radius: 50px;
-    padding: 10px 18px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    box-shadow: 0 3px 12px #ff5f6daa;
-  }
-  #share-buttons button:hover, #download-quote:hover {
-    background: #ff7987;
-    box-shadow: 0 5px 20px #ff7987cc;
-  }
-  #lang-switcher {
-    display: none; /* hide since only English */
-  }
-  #confetti-canvas {
-    position: fixed;
-    pointer-events: none;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    z-index: 9999;
-  }
-  @media (max-width:600px){
-    #question-container, #result-container {
-      max-width: 90vw;
-      padding: 15px 20px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zyntra Echo World 🌌</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #2e2f4f, #1c1b29);
+      color: #f4f4f4;
     }
-    button {
+
+    header {
+      padding: 20px;
+      text-align: center;
+      background: #1a1928;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background: #27263a;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    nav button {
+      background: #403e5c;
+      color: white;
+      border: none;
       padding: 10px 15px;
-      font-size: 0.9rem;
+      border-radius: 5px;
+      cursor: pointer;
     }
-  }
-</style>
+
+    nav button:hover {
+      background: #5d5c81;
+    }
+
+    section {
+      display: none;
+      padding: 30px;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    button.action {
+      background: #0099cc;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .output {
+      margin-top: 20px;
+      padding: 15px;
+      background: #33314c;
+      border-radius: 5px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #1a1928;
+      font-size: 14px;
+      color: #aaa;
+    }
+  </style>
 </head>
 <body>
 
-<header>Emotion Echo 🌟</header>
+<header>Zyntra Echo World 🌌</header>
 
-<div id="question-container">
-  <div id="question">Loading question...</div>
-  <div class="btn-group" id="answers"></div>
-</div>
+<nav>
+  <button onclick="showSection('emotion')">Emotion Echo</button>
+  <button onclick="showSection('inner')">Inner Voice</button>
+  <button onclick="showSection('future')">Future Letter</button>
+  <button onclick="showSection('oracle')">Trend Oracle</button>
+  <button onclick="showSection('quote')">Quote & Music</button>
+</nav>
 
-<div id="result-container" style="display:none;">
-  <div id="result-text"></div>
-  <div id="story"></div>
-  <div id="controls">
-    <button id="back-btn">Back</button>
-    <button id="next-btn">Next Question</button>
-    <button id="download-quote">Download Quote</button>
-  </div>
-  <div id="share-buttons">
-    <button id="share-twitter">Share on Twitter</button>
-    <button id="share-whatsapp">Share on WhatsApp</button>
-  </div>
-</div>
+<section id="emotion" class="active">
+  <h2>🎭 Emotion Echo</h2>
+  <p>Answer this: What kind of day are you having?</p>
+  <input type="text" id="emotionInput" placeholder="e.g. Tired but hopeful">
+  <button class="action" onclick="generateEcho()">Reveal My Echo</button>
+  <div class="output" id="emotionOutput"></div>
+</section>
 
-<canvas id="confetti-canvas"></canvas>
+<section id="inner">
+  <h2>🧠 Inner Voice</h2>
+  <p>Type a thought or feeling. Hear your hidden voice reply.</p>
+  <textarea id="innerInput" placeholder="I'm feeling stuck..."></textarea>
+  <button class="action" onclick="innerVoice()">Reveal Inner Thought</button>
+  <div class="output" id="innerOutput"></div>
+</section>
+
+<section id="future">
+  <h2>📩 Future Letter</h2>
+  <p>Write a message to your future self.</p>
+  <textarea id="futureInput" placeholder="Dear future me, I hope you..."></textarea>
+  <button class="action" onclick="futureLetter()">Create Letter</button>
+  <div class="output" id="futureOutput"></div>
+</section>
+
+<section id="oracle">
+  <h2>🔮 Trend Oracle</h2>
+  <p>Answer: What’s your hidden talent?</p>
+  <input type="text" id="oracleInput" placeholder="e.g. Making people laugh">
+  <button class="action" onclick="trendOracle()">Predict My Future</button>
+  <div class="output" id="oracleOutput"></div>
+</section>
+
+<section id="quote">
+  <h2>🎨 Quote & Music</h2>
+  <p>One click to get a beautiful quote + music vibe.</p>
+  <button class="action" onclick="quoteGenerator()">Generate Quote</button>
+  <div class="output" id="quoteOutput"></div>
+</section>
+
+<footer>
+  Created by You • Powered by Your Ideas 💡 | Zyntra Echo World © 2025
+</footer>
 
 <script>
-  const data = [
-    {
-      question: "How are you feeling today?",
-      answers: ["Happy", "Sad", "Excited", "Angry", "Calm"],
-      results: {
-        Happy: "You shine bright like the sun! Keep smiling! ☀️",
-        Sad: "It's okay to feel down sometimes. Better days are coming. 🌧️",
-        Excited: "Your energy is contagious! Go and conquer! ⚡",
-        Angry: "Take a deep breath. Calm minds make wise choices. 🌬️",
-        Calm: "Peace within is the greatest strength. 🌿"
-      },
-      stories: {
-        Happy: "Once upon a time, a joyful bird sang songs that made everyone smile.",
-        Sad: "A little raindrop fell, but it nourished the beautiful flowers.",
-        Excited: "The brave knight galloped fast, ready for a new adventure.",
-        Angry: "The fierce tiger learned to breathe deeply and found peace.",
-        Calm: "The quiet lake reflected the clear sky, calm and still."
-      },
-      quotes: [
-        "Happiness is a warm puppy. – Charles M. Schulz",
-        "The only way out of the labyrinth of suffering is to forgive. – John Green",
-        "Energy and persistence conquer all things. – Benjamin Franklin"
-      ]
-    },
-    {
-      question: "What motivates you the most?",
-      answers: ["Family", "Success", "Adventure", "Helping Others", "Learning"],
-      results: {
-        Family: "Family is your anchor and your wings.",
-        Success: "Success is the result of hard work and passion.",
-        Adventure: "Life is an exciting journey full of surprises.",
-        "Helping Others": "Your kindness makes the world a better place.",
-        Learning: "Knowledge is the light that guides your path."
-      },
-      stories: {
-        Family: "A family of birds built a nest where love was the foundation.",
-        Success: "A tiny seed grew into a mighty tree with patience and care.",
-        Adventure: "The curious cat explored forests beyond its home.",
-        "Helping Others": "A helping hand changed the life of a stranger.",
-        Learning: "The wise owl read books under the moonlight."
-      },
-      quotes: [
-        "Motivation is what gets you started. Habit is what keeps you going. – Jim Ryun",
-        "Success usually comes to those who are too busy to be looking for it. – Henry David Thoreau",
-        "The biggest adventure you can take is to live the life of your dreams. – Oprah Winfrey"
-      ]
-    }
-  ];
-
-  const questionEl = document.getElementById("question");
-  const answersEl = document.getElementById("answers");
-  const resultContainer = document.getElementById("result-container");
-  const resultText = document.getElementById("result-text");
-  const storyEl = document.getElementById("story");
-  const backBtn = document.getElementById("back-btn");
-  const nextBtn = document.getElementById("next-btn");
-  const downloadBtn = document.getElementById("download-quote");
-  const shareTwitter = document.getElementById("share-twitter");
-  const shareWhatsapp = document.getElementById("share-whatsapp");
-
-  let currentQuestionIndex = 0;
-  let selectedAnswer = null;
-
-  function loadQuestion() {
-    selectedAnswer = null;
-    resultContainer.style.display = "none";
-    questionEl.textContent = data[currentQuestionIndex].question;
-    answersEl.innerHTML = "";
-
-    data[currentQuestionIndex].answers.forEach(ans => {
-      const btn = document.createElement("button");
-      btn.textContent = ans;
-      btn.addEventListener("click", () => {
-        selectedAnswer = ans;
-        showResult();
-      });
-      answersEl.appendChild(btn);
-    });
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
   }
 
-  function showResult() {
-    if (!selectedAnswer) return;
-    const res = data[currentQuestionIndex].results[selectedAnswer];
-    const story = data[currentQuestionIndex].stories[selectedAnswer];
-    const quotes = data[currentQuestionIndex].quotes;
-
-    questionEl.textContent = "";
-    answersEl.innerHTML = "";
-    resultContainer.style.display = "block";
-
-    resultText.textContent = res;
-    storyEl.textContent = story + "\n\nQuote:\n" + quotes[Math.floor(Math.random()*quotes.length)];
-
-    // Confetti celebration for positive vibes
-    if(selectedAnswer === "Happy" || selectedAnswer === "Excited" || selectedAnswer === "Family" || selectedAnswer === "Success" || selectedAnswer === "Adventure" || selectedAnswer === "Helping Others" || selectedAnswer === "Learning"){
-      runConfetti();
-    }
+  function generateEcho() {
+    const input = document.getElementById('emotionInput').value;
+    const output = document.getElementById('emotionOutput');
+    output.innerText = `"${input}" — sometimes even storms know how to dance. 🌧️💃`;
   }
 
-  backBtn.addEventListener("click", () => {
-    resultContainer.style.display = "none";
-    loadQuestion();
-  });
-
-  nextBtn.addEventListener("click", () => {
-    currentQuestionIndex = (currentQuestionIndex + 1) % data.length;
-    loadQuestion();
-  });
-
-  downloadBtn.addEventListener("click", () => {
-    if(!selectedAnswer) return;
-    const text = resultText.textContent + "\n\n" + storyEl.textContent;
-    const blob = new Blob([text], {type: "text/plain"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "emotion_quote.txt";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-
-  shareTwitter.addEventListener("click", () => {
-    if(!selectedAnswer) return;
-    const shareText = encodeURIComponent(resultText.textContent + "\n" + storyEl.textContent);
-    const url = `https://twitter.com/intent/tweet?text=${shareText}`;
-    window.open(url, "_blank");
-  });
-
-  shareWhatsapp.addEventListener("click", () => {
-    if(!selectedAnswer) return;
-    const shareText = encodeURIComponent(resultText.textContent + "\n" + storyEl.textContent);
-    const url = `https://wa.me/?text=${shareText}`;
-    window.open(url, "_blank");
-  });
-
-  // Simple confetti animation
-  const confettiCanvas = document.getElementById('confetti-canvas');
-  const ctx = confettiCanvas.getContext('2d');
-  let confettiPieces = [];
-
-  function ConfettiPiece(x, y, size, color) {
-    this.x = x;
-    this.y = y;
-    this.size = size;
-    this.color = color;
-    this.speedY = Math.random() * 3 + 2;
-    this.speedX = Math.random() * 6 - 3;
-    this.angle = Math.random() * 360;
-    this.rotationSpeed = Math.random() * 10 - 5;
+  function innerVoice() {
+    const input = document.getElementById('innerInput').value;
+    const output = document.getElementById('innerOutput');
+    output.innerText = `Your inner voice says: "What you're feeling is real — but you're stronger than it." 💭`;
   }
 
-  ConfettiPiece.prototype.update = function() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.angle += this.rotationSpeed;
-    if(this.y > confettiCanvas.height) {
-      this.y = 0;
-      this.x = Math.random() * confettiCanvas.width;
-    }
-  };
-
-  ConfettiPiece.prototype.draw = function(ctx) {
-    ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle * Math.PI / 180);
-    ctx.fillStyle = this.color;
-    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-    ctx.restore();
-  };
-
-  function runConfetti() {
-    confettiPieces = [];
-    const colors = ['#FFC107', '#FF5722', '#4CAF50', '#2196F3', '#E91E63'];
-    const count = 100;
-    for(let i=0; i<count; i++) {
-      confettiPieces.push(new ConfettiPiece(
-        Math.random() * confettiCanvas.width,
-        Math.random() * confettiCanvas.height,
-        7,
-        colors[Math.floor(Math.random()*colors.length)]
-      ));
-    }
-    confettiCanvas.style.display = 'block';
-    let frameCount = 0;
-    function animate() {
-      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-      confettiPieces.forEach(p => {
-        p.update();
-        p.draw(ctx);
-      });
-      frameCount++;
-      if(frameCount < 150) {
-        requestAnimationFrame(animate);
-      } else {
-        confettiCanvas.style.display = 'none';
-      }
-    }
-    animate();
+  function futureLetter() {
+    const input = document.getElementById('futureInput').value;
+    const output = document.getElementById('futureOutput');
+    output.innerText = `✨ Future Letter ✨\n\n"${input}"\n\n💌 We'll keep growing. The future you is already proud.`;
   }
 
-  function resizeCanvas() {
-    confettiCanvas.width = window.innerWidth;
-    confettiCanvas.height = window.innerHeight;
+  function trendOracle() {
+    const input = document.getElementById('oracleInput').value;
+    const output = document.getElementById('oracleOutput');
+    output.innerText = `🔮 Prediction: Your talent for "${input}" will become the reason people remember your name. ✨`;
   }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
 
-  // Initialize first question
-  loadQuestion();
+  function quoteGenerator() {
+    const output = document.getElementById('quoteOutput');
+    const quotes = [
+      `"Let your silence be louder than your fears." 🎵`,
+      `"Not all who wander are lost — some are just creating magic."`,
+      `"The stars are watching. You’re not alone." 🌌`,
+      `"Your vibe writes your future — don’t dim it." ✨`
+    ];
+    const pick = quotes[Math.floor(Math.random() * quotes.length)];
+    output.innerText = pick;
+  }
 </script>
 
 </body>
