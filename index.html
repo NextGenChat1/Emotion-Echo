@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Emotion Echo - Next Level</title>
+<title>Emotion Echo - Back & Random Questions</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -53,6 +53,13 @@
   #chartArea canvas {
     max-width: 100%;
   }
+  #navButtons {
+    display: flex;
+    justify-content: center;
+  }
+  #navButtons button {
+    width: 100px;
+  }
 </style>
 </head>
 <body>
@@ -65,6 +72,9 @@
     <button data-answer="Happy">😊 Happy</button>
     <button data-answer="Sad">😢 Sad</button>
     <button data-answer="Calm">😌 Calm</button>
+  </div>
+  <div id="navButtons">
+    <button id="backBtn" disabled>⬅️ Back</button>
   </div>
 </div>
 
@@ -87,14 +97,20 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  // Questions set (you can extend)
-  const questions = [
+  // All possible questions
+  const allQuestions = [
     "How are you feeling right now?",
     "What’s your biggest emotion today?",
-    "Describe your mood in one word."
+    "Describe your mood in one word.",
+    "What made you smile recently?",
+    "What emotion is strongest in you today?",
+    "How would you rate your energy right now?",
+    "What color matches your current feeling?",
+    "If your mood was weather, what would it be?",
+    "Which word best describes your heart now?",
+    "What’s the vibe you want to carry today?"
   ];
-  
-  // Motivational quotes daily (rotating)
+
   const dailyQuotes = [
     "Every day is a new beginning. Take a deep breath and start again.",
     "Your emotions are your superpower — embrace them.",
@@ -103,7 +119,6 @@
     "Sadness is but a wall between two gardens."
   ];
 
-  // Short inspiring stories
   const stories = [
     "Every emotion you feel is a brushstroke painting your unique life story.",
     "In the darkest times, your heart's echo shines the brightest.",
@@ -112,14 +127,12 @@
     "Behind every tear is a story waiting to bloom into strength."
   ];
 
-  // Emoji reactions per answer
   const emojiMap = {
     Happy: "😊",
     Sad: "😢",
     Calm: "😌"
   };
 
-  // Music URLs for moods (free sounds or simple tones)
   const musicMap = {
     Happy: "https://cdn.pixabay.com/download/audio/2022/03/28/audio_7a3e2fba46.mp3?filename=summer-happiness-5987.mp3",
     Sad: "https://cdn.pixabay.com/download/audio/2021/10/11/audio_40a3e27a3e.mp3?filename=soft-piano-ambient-10866.mp3",
@@ -135,31 +148,76 @@
   const shareBtn = document.getElementById("shareBtn");
   const bgMusic = document.getElementById("bgMusic");
   const chartArea = document.getElementById("chartArea");
+  const backBtn = document.getElementById("backBtn");
 
   let answers = [];
-  let currentQ = 0;
+  let questionIndices = [];
+  let currentQIndex = 0;
 
-  // Load saved answers from localStorage
-  if(localStorage.getItem('emotionEchoAnswers')) {
-    answers = JSON.parse(localStorage.getItem('emotionEchoAnswers'));
-    if(answers.length === questions.length) {
-      showResult();
+  // Utility: get a random index from allQuestions excluding given indices
+  function getRandomQuestionIndex(excludeIndices) {
+    const available = allQuestions
+      .map((q,i) => i)
+      .filter(i => !excludeIndices.includes(i));
+    if(available.length === 0) return null;
+    return available[Math.floor(Math.random() * available.length)];
+  }
+
+  // Initialize questions array with unique random questions equal to desired length (e.g. 5)
+  function initQuestions(num = 5) {
+    questionIndices = [];
+    while(questionIndices.length < num) {
+      let idx = getRandomQuestionIndex(questionIndices);
+      if(idx === null) break;
+      questionIndices.push(idx);
     }
   }
 
-  // Show next question or result
-  function nextQuestion(answer) {
-    answers[currentQ] = answer;
-    saveAnswers();
-    showEmoji(emojiMap[answer]);
-    playMusic(answer);
-    showQuote();
-    currentQ++;
-    if(currentQ < questions.length) {
-      questionText.innerText = questions[currentQ];
-    } else {
-      showResult();
+  // Load saved answers and questionIndices from localStorage or start fresh
+  function loadSaved() {
+    const savedAnswers = localStorage.getItem('emotionEchoAnswers');
+    const savedQIndices = localStorage.getItem('emotionEchoQIndices');
+    const savedCurrent = localStorage.getItem('emotionEchoCurrent');
+
+    if(savedAnswers && savedQIndices && savedCurrent !== null) {
+      answers = JSON.parse(savedAnswers);
+      questionIndices = JSON.parse(savedQIndices);
+      currentQIndex = parseInt(savedCurrent,10);
+      if(answers.length === questionIndices.length && answers.length > 0) {
+        showResult();
+        return true;
+      }
+      updateQuestion();
+      updateNavButtons();
+      return true;
     }
+    return false;
+  }
+
+  // Save to localStorage
+  function saveAll() {
+    localStorage.setItem('emotionEchoAnswers', JSON.stringify(answers));
+    localStorage.setItem('emotionEchoQIndices', JSON.stringify(questionIndices));
+    localStorage.setItem('emotionEchoCurrent', currentQIndex.toString());
+  }
+
+  // Show current question text
+  function updateQuestion() {
+    questionText.innerText = allQuestions[questionIndices[currentQIndex]] || "How are you feeling?";
+    // Highlight selected answer if exists
+    document.querySelectorAll('#questionArea button').forEach(btn => {
+      btn.style.backgroundColor = "#0984e3";
+      btn.style.color = "white";
+      if(answers[currentQIndex] === btn.dataset.answer) {
+        btn.style.backgroundColor = "#00b894";
+        btn.style.color = "white";
+      }
+    });
+  }
+
+  // Show/hide back button properly
+  function updateNavButtons() {
+    backBtn.disabled = currentQIndex === 0;
   }
 
   // Show animated emoji reaction
@@ -180,11 +238,6 @@
     }
   }
 
-  // Save answers to localStorage
-  function saveAnswers() {
-    localStorage.setItem('emotionEchoAnswers', JSON.stringify(answers));
-  }
-
   // Show daily quote randomly
   function showQuote() {
     const q = dailyQuotes[Math.floor(Math.random() * dailyQuotes.length)];
@@ -192,7 +245,7 @@
     quoteEl.style.display = "block";
   }
 
-  // Show result summary + story + chart
+  // Show final result with story & chart
   function showResult() {
     questionArea.style.display = "none";
     resultEl.style.display = "block";
@@ -200,12 +253,13 @@
     chartArea.style.display = "block";
 
     let resultText = "Your Emotion Echo:\n\n";
-    for(let i = 0; i < questions.length; i++) {
-      resultText += `${questions[i]}\n→ ${answers[i]}\n\n`;
+    for(let i = 0; i < questionIndices.length; i++) {
+      const qText = allQuestions[questionIndices[i]] || "";
+      const ans = answers[i] || "No answer";
+      resultText += `${qText}\n→ ${ans}\n\n`;
     }
     resultEl.innerText = resultText;
 
-    // Show a random inspiring story
     const randomStory = stories[Math.floor(Math.random() * stories.length)];
     storyEl.innerText = randomStory;
     storyEl.style.display = "block";
@@ -222,47 +276,4 @@
       labels: ['Happy', 'Sad', 'Calm'],
       datasets: [{
         data: [counts.Happy, counts.Sad, counts.Calm],
-        backgroundColor: ['#00b894', '#d63031', '#0984e3'],
-        hoverOffset: 10
-      }]
-    };
-    if(window.myPieChart) window.myPieChart.destroy();
-    window.myPieChart = new Chart(ctx, {
-      type: 'pie',
-      data: data,
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' }
-        }
-      }
-    });
-  }
-
-  // Share button event
-  shareBtn.onclick = () => {
-    const shareText = resultEl.innerText + "\n\nKeep feeling and sharing! #EmotionEcho";
-    if (navigator.share) {
-      navigator.share({
-        title: 'My Emotion Echo',
-        text: shareText,
-      }).catch(console.error);
-    } else {
-      alert("Your browser doesn't support share API. You can copy text manually.");
-      navigator.clipboard.writeText(shareText);
-    }
-  };
-
-  // Button listeners for answers
-  document.querySelectorAll('#questionArea button').forEach(btn => {
-    btn.onclick = () => nextQuestion(btn.dataset.answer);
-  });
-
-  // If answers already complete from localStorage, show result directly
-  if(answers.length === questions.length) {
-    showResult();
-  }
-</script>
-
-</body>
-</html>
+        backgroundColor: ['#00b894', '#d63031', '#
