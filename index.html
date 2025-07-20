@@ -1,250 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<title>Zyntra Echo World 2.0 🌌</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0; 
-    font-family: 'Poppins', sans-serif;
-    color: #eee;
-    background: #222;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    transition: background 1s ease;
-  }
-  header {
-    text-align: center;
-    padding: 18px 12px;
-    font-size: 26px;
-    font-weight: 600;
-    background: #1a1a2e;
-    user-select: none;
-    letter-spacing: 1px;
-  }
-  nav {
-    display: flex;
-    justify-content: space-around;
-    background: #272742;
-  }
-  nav button {
-    flex: 1;
-    padding: 12px 0;
-    background: transparent;
-    border: none;
-    color: #ccc;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  nav button.active, nav button:hover {
-    background: #3f3f72;
-    color: #fff;
-  }
-  main {
-    flex: 1;
-    padding: 20px 15px;
-  }
-  section {
-    display: none;
-  }
-  section.active {
-    display: block;
-  }
-  label {
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-  }
-  input[type=text], textarea {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: none;
-    background: #333355;
-    color: #ddd;
-    resize: vertical;
-    min-height: 40px;
-    margin-bottom: 15px;
-  }
-  textarea {
-    min-height: 80px;
-  }
-  button.action {
-    background: #4a90e2;
-    border: none;
-    padding: 12px 20px;
-    color: white;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.3s ease;
-  }
-  button.action:hover {
-    background: #357abd;
-  }
-  .output {
-    background: rgba(0,0,0,0.45);
-    padding: 16px 20px;
-    border-radius: 8px;
-    margin-top: 20px;
-    font-size: 18px;
-    line-height: 1.4;
-    min-height: 70px;
-    white-space: pre-line;
-  }
-  #musicToggle {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    background: #4a90e2;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 18px;
-    color: white;
-    z-index: 999;
-    user-select: none;
-  }
-  .share-buttons {
-    margin-top: 14px;
-    display: flex;
-    gap: 12px;
-  }
-  .share-buttons button {
-    background: #3b3b6e;
-    border: none;
-    color: white;
-    border-radius: 6px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-weight: 600;
-    flex: 1;
-    user-select: none;
-  }
-  .share-buttons button:hover {
-    background: #5661b1;
-  }
-  /* Mood backgrounds */
-  body.mood-happy {
-    background: linear-gradient(135deg, #fddb92 0%, #d1fdff 100%);
-    color: #222;
-  }
-  body.mood-sad {
-    background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
-    color: #eee;
-  }
-  body.mood-calm {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #eee;
-  }
-  body.mood-excited {
-    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
-    color: #222;
-  }
-  /* Mobile app style */
-  @media (max-width: 600px) {
-    nav {
-      overflow-x: auto;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FutureKey – Unlock a Moment</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #090e1a, #1a1f3b);
+      color: white;
+      text-align: center;
+      padding: 0;
+      overflow-x: hidden;
     }
-    nav button {
-      flex: none;
-      padding: 14px 20px;
-      font-size: 15px;
+
+    .container {
+      padding: 60px 20px;
     }
-  }
-</style>
+
+    .key {
+      margin: 40px auto;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle at center, #ffd700, #ff9d00);
+      border-radius: 50%;
+      box-shadow: 0 0 30px #ffaa00;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+    }
+
+    .key:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px #ffaa00; }
+      50% { box-shadow: 0 0 30px #ffcc00; }
+      100% { box-shadow: 0 0 10px #ffaa00; }
+    }
+
+    .moment {
+      font-size: 1.4em;
+      margin-top: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+    }
+
+    button {
+      margin-top: 30px;
+      background: #ffffff10;
+      color: white;
+      padding: 10px 20px;
+      border: 1px solid #ffffff33;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ffffff20;
+    }
+  </style>
 </head>
-<body class="mood-calm">
+<body>
+  <div class="container">
+    <h1>🔮 FutureKey</h1>
+    <p>Click the key to unlock a single moment from your future.</p>
 
-<header>Zyntra Echo World 2.0 🌌</header>
+    <div class="key" onclick="revealMoment()">
+      🗝️
+    </div>
 
-<nav>
-  <button class="active" data-section="emotion">Emotion Echo</button>
-  <button data-section="inner">Inner Voice</button>
-  <button data-section="future">Future Letter</button>
-  <button data-section="oracle">Trend Oracle</button>
-  <button data-section="quote">Quote & Music</button>
-</nav>
+    <div id="result" class="moment" style="display:none;"></div>
+    <button id="againBtn" style="display:none;" onclick="revealMoment()">Unlock Another</button>
+  </div>
 
-<button id="musicToggle" aria-label="Toggle background music">🔈 Music On</button>
+  <audio id="bgMusic" autoplay loop>
+    <source src="https://cdn.pixabay.com/audio/2023/02/15/audio_f2c2cfb651.mp3" type="audio/mpeg">
+  </audio>
 
-<main>
-  <section id="emotion" class="active" aria-label="Emotion Echo Section">
-    <label id="emotionQuestionLabel" for="emotionInput">How are you feeling today?</label>
-    <input type="text" id="emotionInput" placeholder="e.g. Happy, anxious, excited" autocomplete="off" />
-    <button class="action" id="emotionBtn">Reveal My Echo</button>
-    <div class="output" id="emotionOutput" aria-live="polite" aria-atomic="true"></div>
-    <div class="share-buttons" id="emotionShare"></div>
-  </section>
+  <script>
+    const moments = [
+      "You are standing on a rooftop, the wind in your hair, and you finally feel free.",
+      "A letter arrives with no sender, but it contains the words you needed most.",
+      "You watch yourself laugh under golden light. It's been a long time since it felt real.",
+      "Rain falls outside, but your heart is warm — someone is waiting for you.",
+      "You say the thing you never dared say. Silence follows, but it sets you free.",
+      "You open your eyes to find everything exactly how you dreamed.",
+      "You're walking away from the past. This time, it doesn’t chase you.",
+      "You whisper a name. The echo is gentle — forgiving.",
+      "A hand holds yours. You don’t know who, but you trust it.",
+      "You look in the mirror. Finally, you recognize yourself."
+    ];
 
-  <section id="inner" aria-label="Inner Voice Section">
-    <label for="innerInput">Share a thought or feeling:</label>
-    <textarea id="innerInput" placeholder="I'm feeling stuck..." autocomplete="off"></textarea>
-    <button class="action" id="innerBtn">Reveal Inner Thought</button>
-    <div class="output" id="innerOutput" aria-live="polite" aria-atomic="true"></div>
-    <div class="share-buttons" id="innerShare"></div>
-  </section>
-
-  <section id="future" aria-label="Future Letter Section">
-    <label for="futureInput">Write a message to your future self:</label>
-    <textarea id="futureInput" placeholder="Dear future me, I hope you..." autocomplete="off"></textarea>
-    <button class="action" id="futureBtn">Create Letter</button>
-    <div class="output" id="futureOutput" aria-live="polite" aria-atomic="true"></div>
-    <div class="share-buttons" id="futureShare"></div>
-  </section>
-
-  <section id="oracle" aria-label="Trend Oracle Section">
-    <label id="oracleQuestionLabel" for="oracleInput">What’s your hidden talent?</label>
-    <input type="text" id="oracleInput" placeholder="e.g. Making people laugh" autocomplete="off" />
-    <button class="action" id="oracleBtn">Predict My Future</button>
-    <div class="output" id="oracleOutput" aria-live="polite" aria-atomic="true"></div>
-    <div class="share-buttons" id="oracleShare"></div>
-  </section>
-
-  <section id="quote" aria-label="Quote & Music Section">
-    <button class="action" id="quoteBtn">Generate Quote & Download</button>
-    <div class="output" id="quoteOutput" aria-live="polite" aria-atomic="true"></div>
-    <div class="share-buttons" id="quoteShare"></div>
-  </section>
-</main>
-
-<audio id="bgMusic" loop preload="auto" src="https://cdn.pixabay.com/download/audio/2022/03/01/audio_d786a9724e.mp3?filename=calm-music-ambient-11144.mp3"></audio>
-
-<script>
-  // Sections and nav buttons
-  const navButtons = document.querySelectorAll('nav button');
-  const sections = document.querySelectorAll('main section');
-  function setActiveSection(id) {
-    sections.forEach(sec => sec.classList.remove('active'));
-    navButtons.forEach(btn => btn.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    [...navButtons].find(b => b.dataset.section === id).classList.add('active');
-  }
-  navButtons.forEach(btn => {
-    btn.addEventListener('click', () => setActiveSection(btn.dataset.section));
-  });
-
-  // Speech function
-  function speak(text) {
-    if (!text) return;
-    if (window.speechSynthesis.speaking) {
-      window.speechSynthesis.cancel();
+    function revealMoment() {
+      const result = document.getElementById('result');
+      const againBtn = document.getElementById('againBtn');
+      const random = moments[Math.floor(Math.random() * moments.length)];
+      result.innerHTML = `"${random}"`;
+      result.style.display = 'block';
+      againBtn.style.display = 'inline-block';
     }
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 1;
-    utter.pitch = 1.1;
-    window.speechSynthesis.speak(utter);
-  }
-
-  // Background music toggle
+  </script>
+</body>
+</html>
