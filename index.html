@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Emotion Echo - Multi Questions</title>
+<title>Emotion Echo - Multi Questions with Music & Share</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,7 +14,7 @@
   h1 { color: #0984e3; }
   #container {
     background: white; border-radius: 10px; padding: 20px; margin: 15px 0;
-    max-width: 420px; width: 100%;
+    max-width: 600px; width: 100%;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   }
   #questionText {
@@ -79,6 +79,26 @@
     50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
     100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
   }
+  #shareButtons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  #shareButtons button {
+    cursor: pointer;
+    background: #0984e3;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.3s;
+  }
+  #shareButtons button:hover {
+    background: #00b894;
+  }
 </style>
 </head>
 <body>
@@ -87,9 +107,7 @@
 
 <div id="container">
   <div id="questionText">Loading question...</div>
-  <div id="answers">
-    <!-- answer buttons will be here -->
-  </div>
+  <div id="answers"></div>
 
   <div id="navButtons">
     <button id="backBtn" disabled>⬅️ Back</button>
@@ -99,7 +117,18 @@
   <div id="result" style="display:none; white-space: pre-line;"></div>
   <div id="story" style="display:none; font-style: italic; color: #2d3436;"></div>
   <div id="quote" style="display:none; font-weight: 600; color: #0984e3; margin-top: 10px;"></div>
+
+  <div id="shareButtons" style="display:none;">
+    <button id="shareFb">Share on Facebook</button>
+    <button id="shareTw">Share on Twitter</button>
+    <button id="shareWa">Share on WhatsApp</button>
+  </div>
 </div>
+
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/22/audio_5a3297e52d.mp3?filename=calm-background-music-11010.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
 
 <script>
   const questions = [
@@ -142,6 +171,8 @@
   const resultDiv = document.getElementById("result");
   const storyDiv = document.getElementById("story");
   const quoteDiv = document.getElementById("quote");
+  const shareButtonsDiv = document.getElementById("shareButtons");
+  const bgMusic = document.getElementById("bgMusic");
 
   let currentIndex = 0;
   const userAnswers = [];
@@ -155,6 +186,15 @@
   }
 
   function loadQuestion(index) {
+    questionText.style.display = "block";
+    answersDiv.style.display = "flex";
+    backBtn.style.display = "inline-block";
+    nextBtn.style.display = "inline-block";
+    resultDiv.style.display = "none";
+    storyDiv.style.display = "none";
+    quoteDiv.style.display = "none";
+    shareButtonsDiv.style.display = "none";
+
     questionText.textContent = questions[index];
     answersDiv.innerHTML = "";
     nextBtn.disabled = true;
@@ -200,7 +240,6 @@
   };
 
   function showResults() {
-    document.getElementById("container").style.maxWidth = "600px";
     questionText.style.display = "none";
     answersDiv.style.display = "none";
     backBtn.style.display = "none";
@@ -220,7 +259,29 @@
     const quote = dailyQuotes[Math.floor(Math.random() * dailyQuotes.length)];
     quoteDiv.textContent = quote;
     quoteDiv.style.display = "block";
+
+    shareButtonsDiv.style.display = "flex";
+
+    // Start background music when showing results
+    bgMusic.play().catch(e => {
+      console.log("Music play prevented by browser, user interaction required.");
+    });
   }
+
+  // Share handlers
+  document.getElementById("shareFb").onclick = () => {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(resultDiv.textContent + "\n\nTry Emotion Echo yourself!");
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, "_blank");
+  };
+  document.getElementById("shareTw").onclick = () => {
+    const text = encodeURIComponent(resultDiv.textContent + "\n\nTry Emotion Echo yourself! " + window.location.href);
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
+  };
+  document.getElementById("shareWa").onclick = () => {
+    const text = encodeURIComponent(resultDiv.textContent + "\n\nTry Emotion Echo yourself! " + window.location.href);
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+  };
 
   loadQuestion(currentIndex);
 </script>
