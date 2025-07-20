@@ -1,114 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FutureKey – Unlock a Moment</title>
+  <meta charset="UTF-8">
+  <title>InnerLetter – A Message Meant for You</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom, #090e1a, #1a1f3b);
-      color: white;
-      text-align: center;
       padding: 0;
-      overflow-x: hidden;
+      font-family: 'Georgia', serif;
+      background: linear-gradient(to bottom, #1c1f26, #3d414a);
+      color: #f2f2f2;
+      text-align: center;
     }
 
     .container {
-      padding: 60px 20px;
+      max-width: 800px;
+      margin: 80px auto;
+      padding: 30px;
     }
 
-    .key {
-      margin: 40px auto;
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle at center, #ffd700, #ff9d00);
-      border-radius: 50%;
-      box-shadow: 0 0 30px #ffaa00;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #f5e1a4;
+    }
+
+    .button {
+      background: #f5e1a4;
+      color: #1c1f26;
+      padding: 14px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      animation: pulse 2s infinite;
+      transition: background 0.3s ease;
     }
 
-    .key:active {
-      transform: scale(0.95);
+    .button:hover {
+      background: #e6c94d;
     }
 
-    @keyframes pulse {
-      0% { box-shadow: 0 0 10px #ffaa00; }
-      50% { box-shadow: 0 0 30px #ffcc00; }
-      100% { box-shadow: 0 0 10px #ffaa00; }
-    }
-
-    .moment {
-      font-size: 1.4em;
-      margin-top: 40px;
-      background: rgba(255, 255, 255, 0.08);
+    .letter-box {
+      background: rgba(255, 255, 255, 0.05);
       padding: 30px;
       border-radius: 12px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      margin-top: 40px;
+      font-size: 1.2em;
+      line-height: 1.8;
+      white-space: pre-line;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
     }
 
-    button {
-      margin-top: 30px;
-      background: #ffffff10;
-      color: white;
-      padding: 10px 20px;
-      border: 1px solid #ffffff33;
-      border-radius: 8px;
-      font-size: 1em;
-      cursor: pointer;
+    audio {
+      display: none;
     }
 
-    button:hover {
-      background: #ffffff20;
+    .footer {
+      margin-top: 60px;
+      font-size: 0.9em;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔮 FutureKey</h1>
-    <p>Click the key to unlock a single moment from your future.</p>
+    <h1>💌 InnerLetter</h1>
+    <p>Click the button to receive a letter written just for you.</p>
+    <button class="button" onclick="showLetter()">Read My Letter</button>
 
-    <div class="key" onclick="revealMoment()">
-      🗝️
-    </div>
+    <div id="letter" class="letter-box" style="display: none;"></div>
+    <audio id="bg-music" autoplay loop>
+      <source src="https://cdn.pixabay.com/audio/2023/04/23/audio_5dc7a89a31.mp3" type="audio/mpeg">
+    </audio>
 
-    <div id="result" class="moment" style="display:none;"></div>
-    <button id="againBtn" style="display:none;" onclick="revealMoment()">Unlock Another</button>
+    <div class="footer">A letter from somewhere between your past and your future ✨</div>
   </div>
 
-  <audio id="bgMusic" autoplay loop>
-    <source src="https://cdn.pixabay.com/audio/2023/02/15/audio_f2c2cfb651.mp3" type="audio/mpeg">
-  </audio>
-
   <script>
-    const moments = [
-      "You are standing on a rooftop, the wind in your hair, and you finally feel free.",
-      "A letter arrives with no sender, but it contains the words you needed most.",
-      "You watch yourself laugh under golden light. It's been a long time since it felt real.",
-      "Rain falls outside, but your heart is warm — someone is waiting for you.",
-      "You say the thing you never dared say. Silence follows, but it sets you free.",
-      "You open your eyes to find everything exactly how you dreamed.",
-      "You're walking away from the past. This time, it doesn’t chase you.",
-      "You whisper a name. The echo is gentle — forgiving.",
-      "A hand holds yours. You don’t know who, but you trust it.",
-      "You look in the mirror. Finally, you recognize yourself."
+    const letters = [
+      "Dear You,\n\nI know you're tired. I know the nights feel longer than they used to. But please hold on a little longer. What you cannot see now is becoming the foundation of your strongest self.\n\nThe version of you I'm writing from has found peace — and they are so proud of how far you’ve come.\n\nAlways,\nA future you",
+      "Hey,\n\nYou may feel unseen, but you’ve never been alone. Every tear you’ve cried planted something soft in the universe. That softness lives in your eyes now. Don’t hide it.\n\nLove,\nA soul who remembers you",
+      "To You,\n\nYou forgot how brave you are. You survived storms no one even saw. That quiet strength? It’s your superpower.\n\nStop chasing who you’re *supposed* to be. You're becoming someone better.\n\n— A Voice Inside You",
+      "Hello,\n\nYou may not recognize me. I'm the you that never gave up — not when they left, not when you broke, not even when hope felt embarrassing.\n\nI’m still here. Waiting.\n\nLet’s meet soon.\n\n— Your Unbroken Self",
+      "Dear Soul,\n\nWhat if you’re not lost? What if you’re just between chapters?\n\nKeep turning the page. The part where everything makes sense is closer than you think.\n\nWarmly,\nSomeone who sees your heart",
+      "To the Fighter,\n\nYou’ve carried so much. Pain, guilt, memories that refuse to fade.\n\nYou don’t have to hold it all forever. Let a little go today.\n\nBreathe.\n\nYou made it this far — that matters more than you know.",
     ];
 
-    function revealMoment() {
-      const result = document.getElementById('result');
-      const againBtn = document.getElementById('againBtn');
-      const random = moments[Math.floor(Math.random() * moments.length)];
-      result.innerHTML = `"${random}"`;
-      result.style.display = 'block';
-      againBtn.style.display = 'inline-block';
+    function showLetter() {
+      const random = letters[Math.floor(Math.random() * letters.length)];
+      const letterBox = document.getElementById("letter");
+      letterBox.innerText = random;
+      letterBox.style.display = "block";
     }
   </script>
 </body>
