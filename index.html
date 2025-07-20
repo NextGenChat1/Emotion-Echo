@@ -69,6 +69,7 @@
     font-size: 1.3rem;
     margin-bottom: 15px;
     font-style: italic;
+    white-space: pre-line;
     text-shadow: 1px 1px 8px rgba(0,0,0,0.5);
   }
   #story {
@@ -79,12 +80,14 @@
     max-height: 130px;
     overflow-y: auto;
     margin-bottom: 15px;
+    white-space: pre-line;
   }
   #controls {
     margin-top: 15px;
     display: flex;
     justify-content: center;
     gap: 15px;
+    flex-wrap: wrap;
   }
   #share-buttons button, #download-quote {
     background: #ff5f6d;
@@ -99,11 +102,7 @@
     box-shadow: 0 5px 20px #ff7987cc;
   }
   #lang-switcher {
-    margin: 15px 0 30px 0;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1.1rem;
-    text-decoration: underline;
+    display: none; /* hide since only English */
   }
   #confetti-canvas {
     position: fixed;
@@ -112,13 +111,21 @@
     width: 100vw; height: 100vh;
     z-index: 9999;
   }
+  @media (max-width:600px){
+    #question-container, #result-container {
+      max-width: 90vw;
+      padding: 15px 20px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 0.9rem;
+    }
+  }
 </style>
 </head>
 <body>
 
 <header>Emotion Echo 🌟</header>
-
-<div id="lang-switcher" title="Click to switch language">Switch to Urdu</div>
 
 <div id="question-container">
   <div id="question">Loading question...</div>
@@ -142,276 +149,216 @@
 <canvas id="confetti-canvas"></canvas>
 
 <script>
-  // Language data: questions, answers, results, stories, quotes
-  const data = {
-    en: [
-      {
-        question: "How are you feeling today?",
-        answers: ["Happy", "Sad", "Excited", "Angry", "Calm"],
-        results: {
-          Happy: "You shine bright like the sun! Keep smiling! ☀️",
-          Sad: "It's okay to feel down sometimes. Better days are coming. 🌧️",
-          Excited: "Your energy is contagious! Go and conquer! ⚡",
-          Angry: "Take a deep breath. Calm minds make wise choices. 🌬️",
-          Calm: "Peace within is the greatest strength. 🌿"
-        },
-        stories: {
-          Happy: "Once upon a time, a joyful bird sang songs that made everyone smile.",
-          Sad: "A little raindrop fell, but it nourished the beautiful flowers.",
-          Excited: "The brave knight galloped fast, ready for a new adventure.",
-          Angry: "The fierce tiger learned to breathe deeply and found peace.",
-          Calm: "The quiet lake reflected the clear sky, calm and still."
-        },
-        quotes: [
-          "Happiness is a warm puppy. – Charles M. Schulz",
-          "The only way out of the labyrinth of suffering is to forgive. – John Green",
-          "Energy and persistence conquer all things. – Benjamin Franklin"
-        ]
+  const data = [
+    {
+      question: "How are you feeling today?",
+      answers: ["Happy", "Sad", "Excited", "Angry", "Calm"],
+      results: {
+        Happy: "You shine bright like the sun! Keep smiling! ☀️",
+        Sad: "It's okay to feel down sometimes. Better days are coming. 🌧️",
+        Excited: "Your energy is contagious! Go and conquer! ⚡",
+        Angry: "Take a deep breath. Calm minds make wise choices. 🌬️",
+        Calm: "Peace within is the greatest strength. 🌿"
       },
-      {
-        question: "What motivates you the most?",
-        answers: ["Family", "Success", "Adventure", "Helping Others", "Learning"],
-        results: {
-          Family: "Family is your anchor and your wings.",
-          Success: "Success is the result of hard work and passion.",
-          Adventure: "Life is an exciting journey full of surprises.",
-          Helping Others: "Your kindness makes the world a better place.",
-          Learning: "Knowledge is the light that guides your path."
-        },
-        stories: {
-          Family: "A family of birds built a nest where love was the foundation.",
-          Success: "A tiny seed grew into a mighty tree with patience and care.",
-          Adventure: "The curious cat explored forests beyond its home.",
-          Helping Others: "A helping hand changed the life of a stranger.",
-          Learning: "The wise owl read books under the moonlight."
-        },
-        quotes: [
-          "Motivation is what gets you started. Habit is what keeps you going. – Jim Ryun",
-          "Success usually comes to those who are too busy to be looking for it. – Henry David Thoreau",
-          "The biggest adventure you can take is to live the life of your dreams. – Oprah Winfrey"
-        ]
-      }
-      // Add more question sets as needed
-    ],
-    ur: [
-      {
-        question: "آج آپ کیسا محسوس کر رہے ہیں؟",
-        answers: ["خوش", "اداس", "پرجوش", "غصہ", "پرامن"],
-        results: {
-          "خوش": "آپ سورج کی طرح روشن ہیں! مسکراتے رہیں! ☀️",
-          "اداس": "کبھی کبھی اداس ہونا ٹھیک ہے۔ بہتر دن آئیں گے۔ 🌧️",
-          "پرجوش": "آپ کی توانائی متاثر کن ہے! آگے بڑھیں! ⚡",
-          "غصہ": "گہری سانس لیں۔ پر سکون ذہن اچھے فیصلے کرتا ہے۔ 🌬️",
-          "پرامن": "دل کی سکون سب سے بڑی طاقت ہے۔ 🌿"
-        },
-        stories: {
-          "خوش": "ایک خوش پرندہ تھا جو گانا گاتا تھا اور سب کو خوش کرتا تھا۔",
-          "اداس": "چھوٹا سا بارش کا قطرہ گرا، مگر اس نے خوبصورت پھولوں کو پانی دیا۔",
-          "پرجوش": "بہادر سپاہی تیز دوڑتا رہا، نئی مہم کے لیے تیار۔",
-          "غصہ": "شدید شیر نے گہری سانس لینا سیکھا اور سکون پایا۔",
-          "پرامن": "پرسکون جھیل نے صاف آسمان کی عکس بندی کی۔"
-        },
-        quotes: [
-          "خوشی ایک گرم کتا ہے۔ – چارلس ایم شلز",
-          "درد کے بھول بھلیوں سے نکلنے کا واحد راستہ معاف کرنا ہے۔ – جان گرین",
-          "توانائی اور استقامت ہر چیز کو فتح کرتی ہے۔ – بینجمن فرینکلن"
-        ]
+      stories: {
+        Happy: "Once upon a time, a joyful bird sang songs that made everyone smile.",
+        Sad: "A little raindrop fell, but it nourished the beautiful flowers.",
+        Excited: "The brave knight galloped fast, ready for a new adventure.",
+        Angry: "The fierce tiger learned to breathe deeply and found peace.",
+        Calm: "The quiet lake reflected the clear sky, calm and still."
       },
-      {
-        question: "آپ کو سب سے زیادہ کیا تحریک دیتا ہے؟",
-        answers: ["خاندان", "کامیابی", "مہم جوئی", "دوسروں کی مدد", "سیکھنا"],
-        results: {
-          "خاندان": "خاندان آپ کا سہارا اور آپ کے پروں کی طاقت ہے۔",
-          "کامیابی": "کامیابی محنت اور جذبے کا نتیجہ ہے۔",
-          "مہم جوئی": "زندگی ایک دلچسپ سفر ہے۔",
-          "دوسروں کی مدد": "آپ کی مہربانی دنیا کو بہتر بناتی ہے۔",
-          "سیکھنا": "علم وہ روشنی ہے جو آپ کا راستہ روشن کرتی ہے۔"
-        },
-        stories: {
-          "خاندان": "پرندوں کا خاندان ایک ایسا گھونسلہ بنایا جہاں محبت تھی۔",
-          "کامیابی": "ایک چھوٹا بیج صبر اور دیکھ بھال سے بڑا درخت بنا۔",
-          "مہم جوئی": "ایک تجسس بھری بلی نے اپنے گھر سے باہر جنگل کی سیر کی۔",
-          "دوسروں کی مدد": "ایک مددگار ہاتھ نے اجنبی کی زندگی بدل دی۔",
-          "سیکھنا": "ہوشیار الو نے چاندنی رات میں کتابیں پڑھیں۔"
-        },
-        quotes: [
-          "حوصلہ افزائی وہ چیز ہے جو آپ کو شروع کرتی ہے۔ عادت وہ ہے جو آپ کو جاری رکھتی ہے۔ – جم رائن",
-          "کامیابی عام طور پر اُن لوگوں کو ملتی ہے جو اسے تلاش کرنے میں مصروف نہیں ہوتے۔ – ہنری ڈیوڈ تھورو",
-          "سب سے بڑی مہم جوئی وہ ہے جو آپ کے خوابوں کی زندگی گزارنا ہے۔ – اوپرا ونفری"
-        ]
-      }
-    ]
-  };
+      quotes: [
+        "Happiness is a warm puppy. – Charles M. Schulz",
+        "The only way out of the labyrinth of suffering is to forgive. – John Green",
+        "Energy and persistence conquer all things. – Benjamin Franklin"
+      ]
+    },
+    {
+      question: "What motivates you the most?",
+      answers: ["Family", "Success", "Adventure", "Helping Others", "Learning"],
+      results: {
+        Family: "Family is your anchor and your wings.",
+        Success: "Success is the result of hard work and passion.",
+        Adventure: "Life is an exciting journey full of surprises.",
+        "Helping Others": "Your kindness makes the world a better place.",
+        Learning: "Knowledge is the light that guides your path."
+      },
+      stories: {
+        Family: "A family of birds built a nest where love was the foundation.",
+        Success: "A tiny seed grew into a mighty tree with patience and care.",
+        Adventure: "The curious cat explored forests beyond its home.",
+        "Helping Others": "A helping hand changed the life of a stranger.",
+        Learning: "The wise owl read books under the moonlight."
+      },
+      quotes: [
+        "Motivation is what gets you started. Habit is what keeps you going. – Jim Ryun",
+        "Success usually comes to those who are too busy to be looking for it. – Henry David Thoreau",
+        "The biggest adventure you can take is to live the life of your dreams. – Oprah Winfrey"
+      ]
+    }
+  ];
 
-  let currentLang = 'en';
-  let questionIndex = 0;
+  const questionEl = document.getElementById("question");
+  const answersEl = document.getElementById("answers");
+  const resultContainer = document.getElementById("result-container");
+  const resultText = document.getElementById("result-text");
+  const storyEl = document.getElementById("story");
+  const backBtn = document.getElementById("back-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const downloadBtn = document.getElementById("download-quote");
+  const shareTwitter = document.getElementById("share-twitter");
+  const shareWhatsapp = document.getElementById("share-whatsapp");
+
+  let currentQuestionIndex = 0;
   let selectedAnswer = null;
-  let history = [];
-
-  const questionEl = document.getElementById('question');
-  const answersEl = document.getElementById('answers');
-  const resultContainer = document.getElementById('result-container');
-  const resultText = document.getElementById('result-text');
-  const storyEl = document.getElementById('story');
-  const backBtn = document.getElementById('back-btn');
-  const nextBtn = document.getElementById('next-btn');
-  const langSwitcher = document.getElementById('lang-switcher');
-  const downloadBtn = document.getElementById('download-quote');
-  const shareTwitter = document.getElementById('share-twitter');
-  const shareWhatsapp = document.getElementById('share-whatsapp');
 
   function loadQuestion() {
-    if (questionIndex >= data[currentLang].length) {
-      questionIndex = 0; // loop questions
-    }
     selectedAnswer = null;
-    const q = data[currentLang][questionIndex];
-    questionEl.textContent = q.question;
-    answersEl.innerHTML = '';
-    q.answers.forEach(ans => {
-      const btn = document.createElement('button');
+    resultContainer.style.display = "none";
+    questionEl.textContent = data[currentQuestionIndex].question;
+    answersEl.innerHTML = "";
+
+    data[currentQuestionIndex].answers.forEach(ans => {
+      const btn = document.createElement("button");
       btn.textContent = ans;
-      btn.onclick = () => {
+      btn.addEventListener("click", () => {
         selectedAnswer = ans;
         showResult();
-      };
+      });
       answersEl.appendChild(btn);
     });
-    resultContainer.style.display = 'none';
-    questionEl.parentElement.style.display = 'block';
   }
 
   function showResult() {
     if (!selectedAnswer) return;
-    const q = data[currentLang][questionIndex];
-    questionEl.parentElement.style.display = 'none';
-    resultContainer.style.display = 'block';
+    const res = data[currentQuestionIndex].results[selectedAnswer];
+    const story = data[currentQuestionIndex].stories[selectedAnswer];
+    const quotes = data[currentQuestionIndex].quotes;
 
-    resultText.textContent = q.results[selectedAnswer];
-    storyEl.textContent = q.stories[selectedAnswer];
+    questionEl.textContent = "";
+    answersEl.innerHTML = "";
+    resultContainer.style.display = "block";
 
-    // Show random quote
-    const quotes = q.quotes;
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    storyEl.textContent += "\n\nQuote:\n" + randomQuote;
+    resultText.textContent = res;
+    storyEl.textContent = story + "\n\nQuote:\n" + quotes[Math.floor(Math.random()*quotes.length)];
 
-    history.push({ questionIndex, selectedAnswer });
-    runConfetti();
+    // Confetti celebration for positive vibes
+    if(selectedAnswer === "Happy" || selectedAnswer === "Excited" || selectedAnswer === "Family" || selectedAnswer === "Success" || selectedAnswer === "Adventure" || selectedAnswer === "Helping Others" || selectedAnswer === "Learning"){
+      runConfetti();
+    }
   }
 
-  backBtn.onclick = () => {
-    if (history.length > 1) {
-      history.pop(); // remove current
-      const last = history.pop(); // get previous
-      if (last) {
-        questionIndex = last.questionIndex;
-        selectedAnswer = last.selectedAnswer;
-        loadQuestion();
-        if (selectedAnswer) {
-          showResult();
-        }
-      }
-    } else {
-      // no history, go to first question
-      questionIndex = 0;
-      loadQuestion();
+  backBtn.addEventListener("click", () => {
+    resultContainer.style.display = "none";
+    loadQuestion();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentQuestionIndex = (currentQuestionIndex + 1) % data.length;
+    loadQuestion();
+  });
+
+  downloadBtn.addEventListener("click", () => {
+    if(!selectedAnswer) return;
+    const text = resultText.textContent + "\n\n" + storyEl.textContent;
+    const blob = new Blob([text], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "emotion_quote.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  shareTwitter.addEventListener("click", () => {
+    if(!selectedAnswer) return;
+    const shareText = encodeURIComponent(resultText.textContent + "\n" + storyEl.textContent);
+    const url = `https://twitter.com/intent/tweet?text=${shareText}`;
+    window.open(url, "_blank");
+  });
+
+  shareWhatsapp.addEventListener("click", () => {
+    if(!selectedAnswer) return;
+    const shareText = encodeURIComponent(resultText.textContent + "\n" + storyEl.textContent);
+    const url = `https://wa.me/?text=${shareText}`;
+    window.open(url, "_blank");
+  });
+
+  // Simple confetti animation
+  const confettiCanvas = document.getElementById('confetti-canvas');
+  const ctx = confettiCanvas.getContext('2d');
+  let confettiPieces = [];
+
+  function ConfettiPiece(x, y, size, color) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.color = color;
+    this.speedY = Math.random() * 3 + 2;
+    this.speedX = Math.random() * 6 - 3;
+    this.angle = Math.random() * 360;
+    this.rotationSpeed = Math.random() * 10 - 5;
+  }
+
+  ConfettiPiece.prototype.update = function() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.angle += this.rotationSpeed;
+    if(this.y > confettiCanvas.height) {
+      this.y = 0;
+      this.x = Math.random() * confettiCanvas.width;
     }
   };
 
-  nextBtn.onclick = () => {
-    questionIndex++;
-    loadQuestion();
+  ConfettiPiece.prototype.draw = function(ctx) {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle * Math.PI / 180);
+    ctx.fillStyle = this.color;
+    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+    ctx.restore();
   };
 
-  langSwitcher.onclick = () => {
-    currentLang = currentLang === 'en' ? 'ur' : 'en';
-    langSwitcher.textContent = currentLang === 'en' ? 'Switch to Urdu' : 'Switch to English';
-    questionIndex = 0;
-    history = [];
-    loadQuestion();
-  };
-
-  // Download quote as image
-  downloadBtn.onclick = () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 700;
-    canvas.height = 300;
-    ctx.fillStyle = '#764ba2';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '22px Poppins';
-    ctx.fillStyle = 'white';
-    ctx.textAlign = 'center';
-    const lines = resultText.textContent.split('\n');
-    lines.forEach((line, i) => {
-      ctx.fillText(line, canvas.width / 2, 60 + i * 30);
-    });
-    ctx.font = '18px Poppins';
-    ctx.fillText(storyEl.textContent, canvas.width / 2, 150);
-    const link = document.createElement('a');
-    link.download = 'emotion-quote.png';
-    link.href = canvas.toDataURL();
-    link.click();
-  };
-
-  // Share buttons
-  shareTwitter.onclick = () => {
-    const text = encodeURIComponent(resultText.textContent + " #EmotionEcho");
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
-  };
-  shareWhatsapp.onclick = () => {
-    const text = encodeURIComponent(resultText.textContent + " #EmotionEcho");
-    window.open(`https://wa.me/?text=${text}`, '_blank');
-  };
-
-  // Confetti animation code (simple)
   function runConfetti() {
-    const confettiCanvas = document.getElementById('confetti-canvas');
-    const ctx = confettiCanvas.getContext('2d');
-    confettiCanvas.width = window.innerWidth;
-    confettiCanvas.height = window.innerHeight;
-
-    let confettiPieces = [];
-    const colors = ['#ff5f6d', '#ffc371', '#35c5f0', '#764ba2', '#5a3ea1'];
-
-    class ConfettiPiece {
-      constructor() {
-        this.x = Math.random() * confettiCanvas.width;
-        this.y = Math.random() * confettiCanvas.height - confettiCanvas.height;
-        this.size = 8 + Math.random() * 6;
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-        this.speed = 2 + Math.random() * 3;
-        this.angle = Math.random() * 2 * Math.PI;
-        this.spin = 0.1 + Math.random() * 0.3;
-      }
-      update() {
-        this.y += this.speed;
-        this.x += Math.sin(this.angle) * 2;
-        this.angle += this.spin;
-        if (this.y > confettiCanvas.height) this.y = 0;
-      }
-      draw(ctx) {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.ellipse(this.x, this.y, this.size, this.size / 2, this.angle, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-    }
-
     confettiPieces = [];
-    for (let i = 0; i < 80; i++) {
-      confettiPieces.push(new ConfettiPiece());
+    const colors = ['#FFC107', '#FF5722', '#4CAF50', '#2196F3', '#E91E63'];
+    const count = 100;
+    for(let i=0; i<count; i++) {
+      confettiPieces.push(new ConfettiPiece(
+        Math.random() * confettiCanvas.width,
+        Math.random() * confettiCanvas.height,
+        7,
+        colors[Math.floor(Math.random()*colors.length)]
+      ));
     }
-
-    let frame = 0;
+    confettiCanvas.style.display = 'block';
+    let frameCount = 0;
     function animate() {
-      frame++;
       ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
       confettiPieces.forEach(p => {
         p.update();
         p.draw(ctx);
       });
-      if (frame < 200) {
+      frameCount++;
+      if(frameCount < 150) {
         requestAnimationFrame(animate);
       } else {
-        ctx.clearRect(0, 0
+        confettiCanvas.style.display = 'none';
+      }
+    }
+    animate();
+  }
+
+  function resizeCanvas() {
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // Initialize first question
+  loadQuestion();
+</script>
+
+</body>
+</html>
