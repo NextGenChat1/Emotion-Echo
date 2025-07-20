@@ -3,288 +3,415 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Emotion Echo - Multi Questions with Music & Share</title>
+<title>Emotion Echo - Stylish Interactive</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f4f8;
-    margin: 0; padding: 20px;
-    display: flex; flex-direction: column; align-items: center;
+    margin:0; padding:0; font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
   }
-  h1 { color: #0984e3; }
-  #container {
-    background: white; border-radius: 10px; padding: 20px; margin: 15px 0;
-    max-width: 600px; width: 100%;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  header {
+    padding: 20px;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    user-select: none;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
   }
-  #questionText {
-    font-size: 1.2em;
-    margin-bottom: 15px;
+  #question-container {
+    background: rgba(255 255 255 / 0.1);
+    border-radius: 15px;
+    padding: 25px 35px;
+    margin: 10px;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.2);
+  }
+  #question {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
     min-height: 60px;
   }
-  .answer-btn {
-    margin: 6px 8px 6px 0;
-    padding: 10px 20px;
-    font-size: 16px;
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  button {
+    background: #5a3ea1;
     border: none;
-    border-radius: 8px;
-    background: #0984e3;
-    color: white;
+    padding: 12px 22px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #fff;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 15px rgba(90, 62, 161, 0.4);
   }
-  .answer-btn.selected {
-    background: #00b894;
+  button:hover {
+    background: #8a63d2;
+    box-shadow: 0 6px 20px rgba(138, 99, 210, 0.7);
   }
-  .answer-btn:hover:not(.selected) {
-    background: #74b9ff;
-  }
-  #navButtons {
-    margin-top: 20px;
-    display: flex; justify-content: space-between;
-  }
-  #navButtons button {
-    padding: 10px 18px;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    background: #0984e3;
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s;
-    width: 100px;
-  }
-  #navButtons button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-  #result, #story, #quote {
-    margin-top: 20px;
-    font-size: 1em;
-    color: #2d3436;
-  }
-  .emoji {
-    font-size: 50px;
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    user-select: none;
-    animation: popin 1s ease forwards;
-    z-index: 9999;
-  }
-  @keyframes popin {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
-  }
-  #shareButtons {
+  #result-container {
     margin-top: 25px;
+    max-width: 600px;
+    text-align: center;
+  }
+  #result-text {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    font-style: italic;
+    text-shadow: 1px 1px 8px rgba(0,0,0,0.5);
+  }
+  #story {
+    background: rgba(255 255 255 / 0.15);
+    padding: 18px 25px;
+    border-radius: 15px;
+    font-size: 1rem;
+    max-height: 130px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+  }
+  #controls {
+    margin-top: 15px;
     display: flex;
     justify-content: center;
     gap: 15px;
   }
-  #shareButtons button {
-    cursor: pointer;
-    background: #0984e3;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: background 0.3s;
+  #share-buttons button, #download-quote {
+    background: #ff5f6d;
+    border-radius: 50px;
+    padding: 10px 18px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 3px 12px #ff5f6daa;
   }
-  #shareButtons button:hover {
-    background: #00b894;
+  #share-buttons button:hover, #download-quote:hover {
+    background: #ff7987;
+    box-shadow: 0 5px 20px #ff7987cc;
+  }
+  #lang-switcher {
+    margin: 15px 0 30px 0;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: underline;
+  }
+  #confetti-canvas {
+    position: fixed;
+    pointer-events: none;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 9999;
   }
 </style>
 </head>
 <body>
 
-<h1>Emotion Echo 🔮</h1>
+<header>Emotion Echo 🌟</header>
 
-<div id="container">
-  <div id="questionText">Loading question...</div>
-  <div id="answers"></div>
+<div id="lang-switcher" title="Click to switch language">Switch to Urdu</div>
 
-  <div id="navButtons">
-    <button id="backBtn" disabled>⬅️ Back</button>
-    <button id="nextBtn" disabled>Next ➡️</button>
+<div id="question-container">
+  <div id="question">Loading question...</div>
+  <div class="btn-group" id="answers"></div>
+</div>
+
+<div id="result-container" style="display:none;">
+  <div id="result-text"></div>
+  <div id="story"></div>
+  <div id="controls">
+    <button id="back-btn">Back</button>
+    <button id="next-btn">Next Question</button>
+    <button id="download-quote">Download Quote</button>
   </div>
-
-  <div id="result" style="display:none; white-space: pre-line;"></div>
-  <div id="story" style="display:none; font-style: italic; color: #2d3436;"></div>
-  <div id="quote" style="display:none; font-weight: 600; color: #0984e3; margin-top: 10px;"></div>
-
-  <div id="shareButtons" style="display:none;">
-    <button id="shareFb">Share on Facebook</button>
-    <button id="shareTw">Share on Twitter</button>
-    <button id="shareWa">Share on WhatsApp</button>
+  <div id="share-buttons">
+    <button id="share-twitter">Share on Twitter</button>
+    <button id="share-whatsapp">Share on WhatsApp</button>
   </div>
 </div>
 
-<audio id="bgMusic" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/22/audio_5a3297e52d.mp3?filename=calm-background-music-11010.mp3" type="audio/mpeg" />
-  Your browser does not support the audio element.
-</audio>
+<canvas id="confetti-canvas"></canvas>
 
 <script>
-  const questions = [
-    "How are you feeling right now?",
-    "What’s your biggest emotion today?",
-    "Describe your mood in one word.",
-    "What made you smile recently?",
-    "What emotion is strongest in you today?",
-    "How would you rate your energy right now?"
-  ];
+  // Language data: questions, answers, results, stories, quotes
+  const data = {
+    en: [
+      {
+        question: "How are you feeling today?",
+        answers: ["Happy", "Sad", "Excited", "Angry", "Calm"],
+        results: {
+          Happy: "You shine bright like the sun! Keep smiling! ☀️",
+          Sad: "It's okay to feel down sometimes. Better days are coming. 🌧️",
+          Excited: "Your energy is contagious! Go and conquer! ⚡",
+          Angry: "Take a deep breath. Calm minds make wise choices. 🌬️",
+          Calm: "Peace within is the greatest strength. 🌿"
+        },
+        stories: {
+          Happy: "Once upon a time, a joyful bird sang songs that made everyone smile.",
+          Sad: "A little raindrop fell, but it nourished the beautiful flowers.",
+          Excited: "The brave knight galloped fast, ready for a new adventure.",
+          Angry: "The fierce tiger learned to breathe deeply and found peace.",
+          Calm: "The quiet lake reflected the clear sky, calm and still."
+        },
+        quotes: [
+          "Happiness is a warm puppy. – Charles M. Schulz",
+          "The only way out of the labyrinth of suffering is to forgive. – John Green",
+          "Energy and persistence conquer all things. – Benjamin Franklin"
+        ]
+      },
+      {
+        question: "What motivates you the most?",
+        answers: ["Family", "Success", "Adventure", "Helping Others", "Learning"],
+        results: {
+          Family: "Family is your anchor and your wings.",
+          Success: "Success is the result of hard work and passion.",
+          Adventure: "Life is an exciting journey full of surprises.",
+          Helping Others: "Your kindness makes the world a better place.",
+          Learning: "Knowledge is the light that guides your path."
+        },
+        stories: {
+          Family: "A family of birds built a nest where love was the foundation.",
+          Success: "A tiny seed grew into a mighty tree with patience and care.",
+          Adventure: "The curious cat explored forests beyond its home.",
+          Helping Others: "A helping hand changed the life of a stranger.",
+          Learning: "The wise owl read books under the moonlight."
+        },
+        quotes: [
+          "Motivation is what gets you started. Habit is what keeps you going. – Jim Ryun",
+          "Success usually comes to those who are too busy to be looking for it. – Henry David Thoreau",
+          "The biggest adventure you can take is to live the life of your dreams. – Oprah Winfrey"
+        ]
+      }
+      // Add more question sets as needed
+    ],
+    ur: [
+      {
+        question: "آج آپ کیسا محسوس کر رہے ہیں؟",
+        answers: ["خوش", "اداس", "پرجوش", "غصہ", "پرامن"],
+        results: {
+          "خوش": "آپ سورج کی طرح روشن ہیں! مسکراتے رہیں! ☀️",
+          "اداس": "کبھی کبھی اداس ہونا ٹھیک ہے۔ بہتر دن آئیں گے۔ 🌧️",
+          "پرجوش": "آپ کی توانائی متاثر کن ہے! آگے بڑھیں! ⚡",
+          "غصہ": "گہری سانس لیں۔ پر سکون ذہن اچھے فیصلے کرتا ہے۔ 🌬️",
+          "پرامن": "دل کی سکون سب سے بڑی طاقت ہے۔ 🌿"
+        },
+        stories: {
+          "خوش": "ایک خوش پرندہ تھا جو گانا گاتا تھا اور سب کو خوش کرتا تھا۔",
+          "اداس": "چھوٹا سا بارش کا قطرہ گرا، مگر اس نے خوبصورت پھولوں کو پانی دیا۔",
+          "پرجوش": "بہادر سپاہی تیز دوڑتا رہا، نئی مہم کے لیے تیار۔",
+          "غصہ": "شدید شیر نے گہری سانس لینا سیکھا اور سکون پایا۔",
+          "پرامن": "پرسکون جھیل نے صاف آسمان کی عکس بندی کی۔"
+        },
+        quotes: [
+          "خوشی ایک گرم کتا ہے۔ – چارلس ایم شلز",
+          "درد کے بھول بھلیوں سے نکلنے کا واحد راستہ معاف کرنا ہے۔ – جان گرین",
+          "توانائی اور استقامت ہر چیز کو فتح کرتی ہے۔ – بینجمن فرینکلن"
+        ]
+      },
+      {
+        question: "آپ کو سب سے زیادہ کیا تحریک دیتا ہے؟",
+        answers: ["خاندان", "کامیابی", "مہم جوئی", "دوسروں کی مدد", "سیکھنا"],
+        results: {
+          "خاندان": "خاندان آپ کا سہارا اور آپ کے پروں کی طاقت ہے۔",
+          "کامیابی": "کامیابی محنت اور جذبے کا نتیجہ ہے۔",
+          "مہم جوئی": "زندگی ایک دلچسپ سفر ہے۔",
+          "دوسروں کی مدد": "آپ کی مہربانی دنیا کو بہتر بناتی ہے۔",
+          "سیکھنا": "علم وہ روشنی ہے جو آپ کا راستہ روشن کرتی ہے۔"
+        },
+        stories: {
+          "خاندان": "پرندوں کا خاندان ایک ایسا گھونسلہ بنایا جہاں محبت تھی۔",
+          "کامیابی": "ایک چھوٹا بیج صبر اور دیکھ بھال سے بڑا درخت بنا۔",
+          "مہم جوئی": "ایک تجسس بھری بلی نے اپنے گھر سے باہر جنگل کی سیر کی۔",
+          "دوسروں کی مدد": "ایک مددگار ہاتھ نے اجنبی کی زندگی بدل دی۔",
+          "سیکھنا": "ہوشیار الو نے چاندنی رات میں کتابیں پڑھیں۔"
+        },
+        quotes: [
+          "حوصلہ افزائی وہ چیز ہے جو آپ کو شروع کرتی ہے۔ عادت وہ ہے جو آپ کو جاری رکھتی ہے۔ – جم رائن",
+          "کامیابی عام طور پر اُن لوگوں کو ملتی ہے جو اسے تلاش کرنے میں مصروف نہیں ہوتے۔ – ہنری ڈیوڈ تھورو",
+          "سب سے بڑی مہم جوئی وہ ہے جو آپ کے خوابوں کی زندگی گزارنا ہے۔ – اوپرا ونفری"
+        ]
+      }
+    ]
+  };
 
-  const answersOptions = [
-    { label: "Happy", emoji: "😊" },
-    { label: "Sad", emoji: "😢" },
-    { label: "Calm", emoji: "😌" },
-    { label: "Excited", emoji: "🤩" },
-    { label: "Tired", emoji: "😴" }
-  ];
+  let currentLang = 'en';
+  let questionIndex = 0;
+  let selectedAnswer = null;
+  let history = [];
 
-  const stories = [
-    "Every emotion you feel is a brushstroke painting your unique life story.",
-    "In the darkest times, your heart's echo shines the brightest.",
-    "Your feelings are the compass guiding you to your true self.",
-    "Even small steps in self-reflection lead to great journeys.",
-    "Behind every tear is a story waiting to bloom into strength."
-  ];
+  const questionEl = document.getElementById('question');
+  const answersEl = document.getElementById('answers');
+  const resultContainer = document.getElementById('result-container');
+  const resultText = document.getElementById('result-text');
+  const storyEl = document.getElementById('story');
+  const backBtn = document.getElementById('back-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const langSwitcher = document.getElementById('lang-switcher');
+  const downloadBtn = document.getElementById('download-quote');
+  const shareTwitter = document.getElementById('share-twitter');
+  const shareWhatsapp = document.getElementById('share-whatsapp');
 
-  const dailyQuotes = [
-    "Every day is a new beginning. Take a deep breath and start again.",
-    "Your emotions are your superpower — embrace them.",
-    "Happiness often sneaks in through a door you didn’t know you left open.",
-    "Calmness is the cradle of power.",
-    "Sadness is but a wall between two gardens."
-  ];
-
-  const questionText = document.getElementById("questionText");
-  const answersDiv = document.getElementById("answers");
-  const backBtn = document.getElementById("backBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const resultDiv = document.getElementById("result");
-  const storyDiv = document.getElementById("story");
-  const quoteDiv = document.getElementById("quote");
-  const shareButtonsDiv = document.getElementById("shareButtons");
-  const bgMusic = document.getElementById("bgMusic");
-
-  let currentIndex = 0;
-  const userAnswers = [];
-
-  function showEmoji(emoji) {
-    const e = document.createElement("div");
-    e.className = "emoji";
-    e.textContent = emoji;
-    document.body.appendChild(e);
-    setTimeout(() => e.remove(), 1200);
+  function loadQuestion() {
+    if (questionIndex >= data[currentLang].length) {
+      questionIndex = 0; // loop questions
+    }
+    selectedAnswer = null;
+    const q = data[currentLang][questionIndex];
+    questionEl.textContent = q.question;
+    answersEl.innerHTML = '';
+    q.answers.forEach(ans => {
+      const btn = document.createElement('button');
+      btn.textContent = ans;
+      btn.onclick = () => {
+        selectedAnswer = ans;
+        showResult();
+      };
+      answersEl.appendChild(btn);
+    });
+    resultContainer.style.display = 'none';
+    questionEl.parentElement.style.display = 'block';
   }
 
-  function loadQuestion(index) {
-    questionText.style.display = "block";
-    answersDiv.style.display = "flex";
-    backBtn.style.display = "inline-block";
-    nextBtn.style.display = "inline-block";
-    resultDiv.style.display = "none";
-    storyDiv.style.display = "none";
-    quoteDiv.style.display = "none";
-    shareButtonsDiv.style.display = "none";
+  function showResult() {
+    if (!selectedAnswer) return;
+    const q = data[currentLang][questionIndex];
+    questionEl.parentElement.style.display = 'none';
+    resultContainer.style.display = 'block';
 
-    questionText.textContent = questions[index];
-    answersDiv.innerHTML = "";
-    nextBtn.disabled = true;
+    resultText.textContent = q.results[selectedAnswer];
+    storyEl.textContent = q.stories[selectedAnswer];
 
-    answersOptions.forEach(opt => {
-      const btn = document.createElement("button");
-      btn.className = "answer-btn";
-      btn.textContent = `${opt.emoji} ${opt.label}`;
-      btn.dataset.answer = opt.label;
-      if(userAnswers[index] === opt.label) {
-        btn.classList.add("selected");
-        nextBtn.disabled = false;
-      }
-      btn.onclick = () => {
-        userAnswers[index] = opt.label;
-        Array.from(answersDiv.children).forEach(b => b.classList.remove("selected"));
-        btn.classList.add("selected");
-        nextBtn.disabled = false;
-        showEmoji(opt.emoji);
-      };
-      answersDiv.appendChild(btn);
-    });
+    // Show random quote
+    const quotes = q.quotes;
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    storyEl.textContent += "\n\nQuote:\n" + randomQuote;
 
-    backBtn.disabled = index === 0;
+    history.push({ questionIndex, selectedAnswer });
+    runConfetti();
   }
 
   backBtn.onclick = () => {
-    if(currentIndex > 0) {
-      currentIndex--;
-      loadQuestion(currentIndex);
+    if (history.length > 1) {
+      history.pop(); // remove current
+      const last = history.pop(); // get previous
+      if (last) {
+        questionIndex = last.questionIndex;
+        selectedAnswer = last.selectedAnswer;
+        loadQuestion();
+        if (selectedAnswer) {
+          showResult();
+        }
+      }
+    } else {
+      // no history, go to first question
+      questionIndex = 0;
+      loadQuestion();
     }
   };
 
   nextBtn.onclick = () => {
-    if(!userAnswers[currentIndex]) return; // ensure answer selected
+    questionIndex++;
+    loadQuestion();
+  };
 
-    if(currentIndex < questions.length - 1) {
-      currentIndex++;
-      loadQuestion(currentIndex);
-    } else {
-      showResults();
+  langSwitcher.onclick = () => {
+    currentLang = currentLang === 'en' ? 'ur' : 'en';
+    langSwitcher.textContent = currentLang === 'en' ? 'Switch to Urdu' : 'Switch to English';
+    questionIndex = 0;
+    history = [];
+    loadQuestion();
+  };
+
+  // Download quote as image
+  downloadBtn.onclick = () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 700;
+    canvas.height = 300;
+    ctx.fillStyle = '#764ba2';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '22px Poppins';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    const lines = resultText.textContent.split('\n');
+    lines.forEach((line, i) => {
+      ctx.fillText(line, canvas.width / 2, 60 + i * 30);
+    });
+    ctx.font = '18px Poppins';
+    ctx.fillText(storyEl.textContent, canvas.width / 2, 150);
+    const link = document.createElement('a');
+    link.download = 'emotion-quote.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  };
+
+  // Share buttons
+  shareTwitter.onclick = () => {
+    const text = encodeURIComponent(resultText.textContent + " #EmotionEcho");
+    window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+  };
+  shareWhatsapp.onclick = () => {
+    const text = encodeURIComponent(resultText.textContent + " #EmotionEcho");
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  };
+
+  // Confetti animation code (simple)
+  function runConfetti() {
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const ctx = confettiCanvas.getContext('2d');
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+
+    let confettiPieces = [];
+    const colors = ['#ff5f6d', '#ffc371', '#35c5f0', '#764ba2', '#5a3ea1'];
+
+    class ConfettiPiece {
+      constructor() {
+        this.x = Math.random() * confettiCanvas.width;
+        this.y = Math.random() * confettiCanvas.height - confettiCanvas.height;
+        this.size = 8 + Math.random() * 6;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.speed = 2 + Math.random() * 3;
+        this.angle = Math.random() * 2 * Math.PI;
+        this.spin = 0.1 + Math.random() * 0.3;
+      }
+      update() {
+        this.y += this.speed;
+        this.x += Math.sin(this.angle) * 2;
+        this.angle += this.spin;
+        if (this.y > confettiCanvas.height) this.y = 0;
+      }
+      draw(ctx) {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.ellipse(this.x, this.y, this.size, this.size / 2, this.angle, 0, 2 * Math.PI);
+        ctx.fill();
+      }
     }
-  };
 
-  function showResults() {
-    questionText.style.display = "none";
-    answersDiv.style.display = "none";
-    backBtn.style.display = "none";
-    nextBtn.style.display = "none";
+    confettiPieces = [];
+    for (let i = 0; i < 80; i++) {
+      confettiPieces.push(new ConfettiPiece());
+    }
 
-    let summary = "Your Emotion Echo Summary:\n\n";
-    questions.forEach((q, i) => {
-      summary += `${q}\n→ ${userAnswers[i] || "No answer"}\n\n`;
-    });
-    resultDiv.textContent = summary;
-    resultDiv.style.display = "block";
-
-    const story = stories[Math.floor(Math.random() * stories.length)];
-    storyDiv.textContent = story;
-    storyDiv.style.display = "block";
-
-    const quote = dailyQuotes[Math.floor(Math.random() * dailyQuotes.length)];
-    quoteDiv.textContent = quote;
-    quoteDiv.style.display = "block";
-
-    shareButtonsDiv.style.display = "flex";
-
-    // Start background music when showing results
-    bgMusic.play().catch(e => {
-      console.log("Music play prevented by browser, user interaction required.");
-    });
-  }
-
-  // Share handlers
-  document.getElementById("shareFb").onclick = () => {
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(resultDiv.textContent + "\n\nTry Emotion Echo yourself!");
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, "_blank");
-  };
-  document.getElementById("shareTw").onclick = () => {
-    const text = encodeURIComponent(resultDiv.textContent + "\n\nTry Emotion Echo yourself! " + window.location.href);
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
-  };
-  document.getElementById("shareWa").onclick = () => {
-    const text = encodeURIComponent(resultDiv.textContent + "\n\nTry Emotion Echo yourself! " + window.location.href);
-    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
-  };
-
-  loadQuestion(currentIndex);
-</script>
-
-</body>
-</html>
+    let frame = 0;
+    function animate() {
+      frame++;
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiPieces.forEach(p => {
+        p.update();
+        p.draw(ctx);
+      });
+      if (frame < 200) {
+        requestAnimationFrame(animate);
+      } else {
+        ctx.clearRect(0, 0
