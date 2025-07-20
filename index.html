@@ -1,150 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Emotion Echo 2.0</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #d3cce3, #e9e4f0);
-      transition: background 1s ease;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 550px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      margin: 50px auto;
-      padding: 30px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2em;
-      color: #4b0082;
-    }
-
-    select, input, button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 12px;
-      font-size: 1em;
-      border-radius: 10px;
-      border: none;
-    }
-
-    button {
-      background-color: #6a11cb;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    #result {
-      display: none;
-      background: white;
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 15px;
-      text-align: left;
-    }
-
-    #output {
-      font-size: 1.1em;
-      line-height: 1.6;
-      color: #333;
-    }
-
-    #langSelect {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      padding: 5px 10px;
-      font-size: 0.9em;
-      border-radius: 5px;
-    }
-
-    #controls {
-      margin-top: 10px;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      font-size: 0.9em;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .muted { background: #999; color: white; }
-    .share { background: #1da1f2; color: white; }
-    .download { background: #ff6347; color: white; }
-
-    canvas {
-      display: none;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Emotion Echo Interactive</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #cfd9df, #e2ebf0);
+    margin: 0; padding: 20px;
+    display: flex; justify-content: center; align-items: center; min-height: 100vh;
+    transition: background 0.5s ease;
+  }
+  .container {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  #question {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+  input, select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  button {
+    padding: 12px 20px;
+    background: #6a11cb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    margin: 5px 0;
+  }
+  #result {
+    margin-top: 20px;
+    background: #f7f3ff;
+    padding: 20px;
+    border-radius: 15px;
+    font-size: 1.1em;
+    color: #3a0ca3;
+    white-space: pre-wrap;
+  }
+  #shareDownload {
+    margin-top: 15px;
+  }
+</style>
 </head>
 <body>
-<select id="langSelect" onchange="switchLanguage()">
-  <option value="en">🌐 English</option>
-  <option value="ur">🌙 Urdu</option>
-</select>
-
 <div class="container">
-  <h1 id="title">Emotion Echo</h1>
-  <p id="desc">Answer & reveal your soul’s whisper</p>
-
-  <label id="q1">1. How are you feeling today?</label>
-  <select id="feeling">
-    <option value="Lonely">Lonely</option>
-    <option value="Happy">Happy</option>
-    <option value="Confused">Confused</option>
-    <option value="Heartbroken">Heartbroken</option>
-    <option value="Calm">Calm</option>
+  <h1 id="title">Emotion Echo Interactive</h1>
+  <select id="langSelect" aria-label="Select Language" title="Select Language" style="margin-bottom:20px;">
+    <option value="en" selected>English</option>
+    <option value="ur">اردو</option>
   </select>
-
-  <label id="q2">2. Alone or with someone?</label>
-  <select id="alone">
-    <option value="Alone">Alone</option>
-    <option value="With someone">With someone</option>
-  </select>
-
-  <label id="q3">3. What do you feel you're missing?</label>
-  <input id="missing" type="text" placeholder="Love, peace, time..." />
-
-  <label id="q4">4. One word for your pain?</label>
-  <input id="pain" type="text" placeholder="Empty, cold, loud..." />
-
-  <label id="q5">5. Message to your future self?</label>
-  <input id="future" type="text" placeholder="Stay strong, I love you..." />
-
-  <button onclick="generate()">✨ Reveal My Echo</button>
-
-  <div id="result">
-    <h3 id="resultTitle">Your Emotion Echo 💜</h3>
-    <p id="output"></p>
-
-    <div id="controls">
-      <button class="btn muted" onclick="toggleMute()" id="muteBtn">🔇 Mute</button>
-      <button class="btn share" onclick="share()">📤 Share</button>
-      <button class="btn download" onclick="downloadImage()">🖼️ Save as Image</button>
-    </div>
+  <div id="questionArea">
+    <div id="question"></div>
+    <input type="text" id="answer" placeholder="Type your answer here" autocomplete="off" />
+    <button id="nextBtn">Next</button>
+  </div>
+  <div id="result" style="display:none;"></div>
+  <div id="shareDownload" style="display:none;">
+    <button id="shareBtn">Share on WhatsApp</button>
+    <button id="downloadBtn">Download Quote Image</button>
   </div>
 </div>
 
-<canvas id="canvas"></canvas>
-<audio id="bgMusic" loop autoplay>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_ae307f9fb3.mp3?filename=sadness-209479.mp3" type="audio/mpeg" />
-</audio>
-
 <script>
+  const texts = {
+    en: {
+      title: "Emotion Echo Interactive",
+      next: "Next",
+      share: "Share on WhatsApp",
+      download: "Download Quote Image",
+      placeholder: "Type your answer here",
+      alertEmpty: "Please enter your answer.",
+      echoTitle: "Your Emotion Echo:\n\n",
+      questionsSets: [
+        [
+          "How do you feel today?",
+          "Who is your favorite person?",
+          "What do you want to tell your future self?",
+          "What scares you the most?",
+          "What is one word for your pain?"
+        ],
+        [
+          "What’s your biggest dream?",
+          "What do you miss right now?",
+          "How do you relax?",
+          "What makes you happy?",
+          "What’s your secret wish?"
+        ],
+        [
+          "Describe your perfect day.",
+          "What’s one thing you regret?",
+          "What motivates you to keep going?",
+          "What do you love most about yourself?",
+          "If you could change one thing, what would it be?"
+        ]
+      ]
+    },
+    ur: {
+      title: "احساس کی گونج",
+      next: "اگلا",
+      share: "واٹس ایپ پر شیئر کریں",
+      download: "تصویر ڈاؤن لوڈ کریں",
+      placeholder: "اپنا جواب یہاں لکھیں",
+      alertEmpty: "براہ کرم اپنا جواب درج کریں۔",
+      echoTitle: "آپ کی احساس کی گونج:\n\n",
+      questionsSets: [
+        [
+          "آج آپ کیسا محسوس کر رہے ہیں؟",
+          "آپ کا پسندیدہ شخص کون ہے؟",
+          "آپ اپنے مستقبل کے خود کو کیا کہنا چاہتے ہیں؟",
+          "آپ کو سب سے زیادہ کیا ڈراتا ہے؟",
+          "آپ کے درد کے لیے ایک لفظ کیا ہے؟"
+        ],
+        [
+          "آپ کا سب سے بڑا خواب کیا ہے؟",
+          "آپ کو ابھی کیا یاد آ رہا ہے؟",
+          "آپ کیسے آرام کرتے ہیں؟",
+          "آپ کو کیا خوش کرتا ہے؟",
+          "آپ کی پوشیدہ خواہش کیا ہے؟"
+        ],
+        [
+          "اپنا بہترین دن بیان کریں۔",
+          "ایک چیز جس پر آپ کو افسوس ہے۔",
+          "آپ کو آگے بڑھنے کی ترغیب کیا دیتی ہے؟",
+          "آپ اپنے بارے میں سب سے زیادہ کیا پسند کرتے ہیں؟",
+          "اگر آپ کچھ بدل سکتے، تو وہ کیا ہوتا؟"
+        ]
+      ]
+    }
+  };
+
+  let language = "en";
+
+  // Pick a random question set on start or language change
+  let currentSet = [];
+  let currentIndex = 0;
+  let answers = [];
+
+  const body = document.body;
+  const titleEl = document.getElementById('title');
+  const questionEl = document.getElementById('question');
+  const answerEl = document.getElementById('answer');
+  const nextBtn = document.getElementById('nextBtn');
+  const resultEl = document.getElementById('result');
+  const questionArea = document.getElementById('questionArea');
+  const shareDownload = document.getElementById('shareDownload');
+  const shareBtn = document.getElementById('shareBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const langSelect = document.getElementById('langSelect');
+
+  function init() {
+    const text = texts[language];
+    titleEl.innerText = text.title;
+    nextBtn.innerText = text.next;
+    shareBtn.innerText = text.share;
+    downloadBtn.innerText = text.download;
+    answerEl.placeholder = text.placeholder;
+    currentSet = text.questionsSets[Math.floor(Math.random() * text.questionsSets.length)];
+    currentIndex = 0;
+    answers = [];
+    questionArea.style.display = "block";
+    resultEl.style.display = "none";
+    shareDownload.style.display = "none";
+    showQuestion();
+    resetBackground();
+  }
+
+  function showQuestion() {
+    questionEl.innerText = currentSet[currentIndex];
+    answerEl.value = '';
+    answerEl.focus();
+  }
+
+  function resetBackground() {
+    body.style.background = 'linear-gradient(135deg, #cfd9df, #e2ebf0)';
+  }
+
+  function updateBackground(feeling) {
+    const f = feeling.toLowerCase();
+    if (f.includes("happy")) body.style.background = "#ffeaa7";
+    else if (f.includes("lonely")) body.style.background = "#222";
+    else if (f.includes("sad")) body.style.background = "#74b9ff";
+    else if (f.includes("calm")) body.style.background = "#a29bfe";
+    else if (f.includes("angry")) body.style.background = "#d63031";
+    else body.style.background = 'linear-gradient(135deg, #cfd9df, #e2ebf0)';
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const answer = answerEl.value.trim();
+    const alertEmpty = texts[language].alertEmpty;
+    if (answer === '') {
+      alert(alertEmpty);
+      return;
+    }
+    answers.push(answer);
+
+    // Update background based on first answer (feeling)
+    if(currentIndex === 0) updateBackground(answer);
+
+    currentIndex++;
+    if (currentIndex < currentSet.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult() {
+    questionArea.style.display = "none";
+    let echo = texts[language].echoTitle;
+    currentSet.forEach((q, i) => {
+      echo += `${q}\n→ ${answers[i]}\n\n`;
+    });
+    resultEl.innerText = echo;
+    resultEl.style.display = "block";
+    shareDownload.style.display = "block";
+  }
+
+  // WhatsApp share
+  shareBtn.addEventListener('click', () => {
+    const text = encodeURIComponent(resultEl.innerText);
+    const url = `https://api.whatsapp.com/send?text=${text}`;
+    window.open(url, '_blank');
+  });
+
+  // Download quote image using canvas
+  downloadBtn.addEventListener('click', () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const padding = 20;
+    const lineHeight = 24;
+    const lines = resultEl.innerText.split('\n');
+    const maxWidth = 380;
+
+    canvas.width = maxWidth + padding * 2;
+    canvas.height = lines.length * lineHeight + padding * 2;
+
+    // Background
+    ctx.fillStyle = '#f7f3ff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Text style
+    ctx.fillStyle = '#3a0ca3';
+    ctx.font = '16px Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+    ctx.textBaseline = 'top';
+
+    // Draw text line by line
+    lines.forEach((line, i) => {
+      ctx.fillText(line, padding, padding + i * lineHeight);
+    });
+
+    // Save image
+    const link = document.createElement('a');
+    link.download = 'emotion-echo-quote.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+
+  langSelect.addEventListener('change', () => {
+    language = langSelect.value;
+    init();
+  });
+
+  // Initialize on page load
+  init();
+</script>
+</body>
+</html>
