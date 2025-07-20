@@ -3,186 +3,148 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Emotion Echo</title>
+  <title>Emotion Echo 2.0</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(120deg, #d3cce3, #e9e4f0);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: linear-gradient(135deg, #d3cce3, #e9e4f0);
+      transition: background 1s ease;
     }
 
     .container {
       width: 90%;
-      max-width: 500px;
-      background: rgba(255, 255, 255, 0.25);
+      max-width: 550px;
+      background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(15px);
-      border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border-radius: 20px;
+      margin: 50px auto;
       padding: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
       text-align: center;
     }
 
     h1 {
       font-size: 2em;
-      margin-bottom: 20px;
       color: #4b0082;
     }
 
     select, input, button {
       width: 100%;
       margin: 10px 0;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
+      padding: 12px;
       font-size: 1em;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      border: none;
     }
 
     button {
-      background: #6a11cb;
+      background-color: #6a11cb;
       color: white;
-      cursor: pointer;
       font-weight: bold;
+      cursor: pointer;
     }
 
     #result {
       display: none;
-      margin-top: 20px;
       background: white;
-      padding: 15px;
-      border-radius: 10px;
-      color: #333;
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: left;
+    }
+
+    #output {
       font-size: 1.1em;
+      line-height: 1.6;
+      color: #333;
     }
 
     #langSelect {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 5px;
+      top: 15px;
+      right: 15px;
+      padding: 5px 10px;
       font-size: 0.9em;
       border-radius: 5px;
     }
 
-    label {
-      font-weight: bold;
+    #controls {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 0.9em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .muted { background: #999; color: white; }
+    .share { background: #1da1f2; color: white; }
+    .download { background: #ff6347; color: white; }
+
+    canvas {
+      display: none;
     }
   </style>
 </head>
 <body>
+<select id="langSelect" onchange="switchLanguage()">
+  <option value="en">🌐 English</option>
+  <option value="ur">🌙 Urdu</option>
+</select>
 
-  <select id="langSelect" onchange="switchLanguage()">
-    <option value="en">🌐 English</option>
-    <option value="ur">🌙 Urdu</option>
+<div class="container">
+  <h1 id="title">Emotion Echo</h1>
+  <p id="desc">Answer & reveal your soul’s whisper</p>
+
+  <label id="q1">1. How are you feeling today?</label>
+  <select id="feeling">
+    <option value="Lonely">Lonely</option>
+    <option value="Happy">Happy</option>
+    <option value="Confused">Confused</option>
+    <option value="Heartbroken">Heartbroken</option>
+    <option value="Calm">Calm</option>
   </select>
 
-  <div class="container">
-    <h1 id="title">Emotion Echo</h1>
-    <p id="desc">Answer 5 quick questions and discover your inner voice</p>
+  <label id="q2">2. Alone or with someone?</label>
+  <select id="alone">
+    <option value="Alone">Alone</option>
+    <option value="With someone">With someone</option>
+  </select>
 
-    <div class="form-group">
-      <label id="q1">1. How are you feeling today?</label><br>
-      <select id="feeling">
-        <option value="Lonely">Lonely</option>
-        <option value="Happy">Happy</option>
-        <option value="Confused">Confused</option>
-        <option value="Heartbroken">Heartbroken</option>
-        <option value="Calm">Calm</option>
-      </select>
-    </div>
+  <label id="q3">3. What do you feel you're missing?</label>
+  <input id="missing" type="text" placeholder="Love, peace, time..." />
 
-    <div class="form-group">
-      <label id="q2">2. Are you with someone or alone?</label><br>
-      <select id="alone">
-        <option value="Alone">Alone</option>
-        <option value="With someone">With someone</option>
-      </select>
-    </div>
+  <label id="q4">4. One word for your pain?</label>
+  <input id="pain" type="text" placeholder="Empty, cold, loud..." />
 
-    <div class="form-group">
-      <label id="q3">3. What do you feel you're missing?</label><br>
-      <input type="text" id="missing" placeholder="Love, peace, hope...">
-    </div>
+  <label id="q5">5. Message to your future self?</label>
+  <input id="future" type="text" placeholder="Stay strong, I love you..." />
 
-    <div class="form-group">
-      <label id="q4">4. One word for your pain?</label><br>
-      <input type="text" id="pain" placeholder="Empty, cold, loud...">
-    </div>
+  <button onclick="generate()">✨ Reveal My Echo</button>
 
-    <div class="form-group">
-      <label id="q5">5. Message to your future self?</label><br>
-      <input type="text" id="future" placeholder="Stay strong, I love you...">
-    </div>
+  <div id="result">
+    <h3 id="resultTitle">Your Emotion Echo 💜</h3>
+    <p id="output"></p>
 
-    <button onclick="generate()">✨ Reveal My Echo</button>
-
-    <div id="result">
-      <h3 id="resultTitle">Your Emotion Echo 🎧</h3>
-      <p id="output"></p>
+    <div id="controls">
+      <button class="btn muted" onclick="toggleMute()" id="muteBtn">🔇 Mute</button>
+      <button class="btn share" onclick="share()">📤 Share</button>
+      <button class="btn download" onclick="downloadImage()">🖼️ Save as Image</button>
     </div>
   </div>
+</div>
 
-  <script>
-    const languages = {
-      en: {
-        title: "Emotion Echo",
-        desc: "Answer 5 quick questions and discover your inner voice",
-        q1: "1. How are you feeling today?",
-        q2: "2. Are you with someone or alone?",
-        q3: "3. What do you feel you're missing?",
-        q4: "4. One word for your pain?",
-        q5: "5. Message to your future self?",
-        resultTitle: "Your Emotion Echo 🎧",
-      },
-      ur: {
-        title: "احساس کی بازگشت",
-        desc: "5 سوالات کے جوابات دیں اور اپنے دل کی آواز سنیں",
-        q1: "1. آج آپ کیسا محسوس کر رہے ہیں؟",
-        q2: "2. آپ اکیلے ہیں یا کسی کے ساتھ؟",
-        q3: "3. آپ کو کیا کمی محسوس ہو رہی ہے؟",
-        q4: "4. آپ کے درد کے لیے ایک لفظ؟",
-        q5: "5. اپنے مستقبل کے خود کو کیا کہنا چاہیں گے؟",
-        resultTitle: "آپ کی جذباتی بازگشت 🎧"
-      }
-    };
+<canvas id="canvas"></canvas>
+<audio id="bgMusic" loop autoplay>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_ae307f9fb3.mp3?filename=sadness-209479.mp3" type="audio/mpeg" />
+</audio>
 
-    function switchLanguage() {
-      const lang = document.getElementById('langSelect').value;
-      const l = languages[lang];
-      document.getElementById('title').innerText = l.title;
-      document.getElementById('desc').innerText = l.desc;
-      document.getElementById('q1').innerText = l.q1;
-      document.getElementById('q2').innerText = l.q2;
-      document.getElementById('q3').innerText = l.q3;
-      document.getElementById('q4').innerText = l.q4;
-      document.getElementById('q5').innerText = l.q5;
-      document.getElementById('resultTitle').innerText = l.resultTitle;
-    }
-
-    function generate() {
-      const feeling = document.getElementById("feeling").value;
-      const alone = document.getElementById("alone").value;
-      const missing = document.getElementById("missing").value;
-      const pain = document.getElementById("pain").value;
-      const future = document.getElementById("future").value;
-      const lang = document.getElementById("langSelect").value;
-
-      let message = "";
-      if (lang === "en") {
-        message = `You're feeling ${feeling.toLowerCase()} and ${alone.toLowerCase()}. You miss "${missing}". Your pain feels like "${pain}". But your heart says: "${future}". Trust your journey. 💜`;
-      } else {
-        message = `آپ ${feeling} محسوس کر رہے ہیں اور ${alone}. آپ کو "${missing}" کی کمی محسوس ہو رہی ہے۔ آپ کا درد "${pain}" کی طرح محسوس ہوتا ہے۔ لیکن دل کہتا ہے: "${future}"۔ اپنا سفر جاری رکھیں 💜`;
-      }
-
-      document.getElementById("output").innerText = message;
-      document.getElementById("result").style.display = "block";
-    }
-  </script>
-
-</body>
-</html>
+<script>
