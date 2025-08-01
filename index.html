@@ -55,6 +55,7 @@
             width: 90%;
             line-height: 1.2;
             padding: 0 1rem;
+            font-style: italic;
         }
     </style>
 </head>
@@ -62,17 +63,17 @@
     <div class="container mx-auto p-8 lg:p-12">
         <header class="text-center mb-12">
             <h1 class="text-6xl font-extrabold text-white leading-tight drop-shadow-lg">MemeCrafter AI</h1>
-            <p class="text-xl mt-4 text-white font-medium drop-shadow-md">Apni tasveer se mazedaar memes banaein, AI ke saath!</p>
+            <p class="text-xl mt-4 text-white font-medium drop-shadow-md">Create hilarious memes from your images, with AI!</p>
         </header>
 
         <div class="card p-8 transition-all duration-500">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800">Tasveer Upload Karein</h2>
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Upload an Image</h2>
             
             <form id="meme-form">
                 <div id="drop-area" class="file-upload-area p-8 rounded-lg cursor-pointer text-center mb-6">
                     <input type="file" id="image-upload" accept="image/*" class="hidden">
-                    <p class="text-gray-500 font-bold">Tasveer ko yahan drag aur drop karein<br>ya</p>
-                    <button type="button" class="mt-4 bg-indigo-500 text-white py-2 px-6 rounded-full hover:bg-indigo-600 transition-colors">Browse karein</button>
+                    <p class="text-gray-500 font-bold">Drag and drop your image here<br>or</p>
+                    <button type="button" class="mt-4 bg-indigo-500 text-white py-2 px-6 rounded-full hover:bg-indigo-600 transition-colors">Browse files</button>
                 </div>
                 
                 <div id="image-preview-container" class="relative hidden mb-6 rounded-lg overflow-hidden border-4 border-indigo-500">
@@ -86,7 +87,7 @@
                 </div>
                 
                 <button type="submit" id="generate-button" class="w-full bg-indigo-600 text-white font-extrabold text-lg py-4 px-4 rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105 mt-6 hidden" disabled>
-                    Meme Banayein
+                    Generate Meme
                 </button>
 
                 <div id="loading-spinner" class="flex justify-center items-center h-24 hidden mt-6">
@@ -111,7 +112,7 @@
 
         // Global variables
         let uploadedImageFile = null;
-        const apiKey = "AIzaSyCT-lrOm3U9xBJxOK6hakjdAF6sL8L3OG0";
+        const apiKey = "AIzaSyAme2w3MU82Q__0LECCyqfAoRDRx6ds3HI";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
         // Utility function to convert file to base64
@@ -193,11 +194,11 @@
         }
 
         // Call Gemini API to generate meme text
-        async function generateMemeText(imageAsBase64) {
+        async function generateMemeText(imageAsBase64, retryCount = 0) {
             loadingSpinner.classList.remove('hidden');
             generateButton.disabled = true;
 
-            const prompt = "Is tasveer ko dekh kar ek mazedar, chota aur viral hone wala meme text Hindi mein likho. Sirf text do aur koi atirikt jankari ya description mat do.";
+            const prompt = "Look at this image and write a short, hilarious, and viral-worthy meme text in English. Provide only the text, without any additional information or descriptions.";
 
             const payload = {
                 contents: [{
@@ -237,9 +238,15 @@
                 }
 
             } catch (error) {
-                console.error("Error generating meme text:", error);
-                alert("Meme text generate karne mein ek galti ho gayi. Kripya dobara koshish karein.");
-                return null;
+                if (retryCount < 3) {
+                    console.error(`Attempt ${retryCount + 1} failed. Retrying...`, error);
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+                    return generateMemeText(imageAsBase64, retryCount + 1);
+                } else {
+                    console.error("Failed to generate meme text after multiple retries:", error);
+                    alert("There was an error generating the meme text. Please try again.");
+                    return null;
+                }
             } finally {
                 loadingSpinner.classList.add('hidden');
                 generateButton.disabled = false;
