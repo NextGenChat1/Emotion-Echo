@@ -2,97 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>InnerLetter – A Message Meant for You</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Downloader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Georgia', serif;
-      background: linear-gradient(to bottom, #1c1f26, #3d414a);
-      color: #f2f2f2;
+      background: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
       text-align: center;
+      padding: 40px 20px;
     }
-
-    .container {
-      max-width: 800px;
-      margin: 80px auto;
-      padding: 30px;
-    }
-
     h1 {
-      font-size: 2.5em;
+      color: #ff4081;
       margin-bottom: 20px;
-      color: #f5e1a4;
     }
-
-    .button {
-      background: #f5e1a4;
-      color: #1c1f26;
-      padding: 14px 30px;
-      font-size: 1.2em;
-      border: none;
+    input {
+      padding: 12px;
+      width: 80%;
+      max-width: 400px;
+      font-size: 18px;
       border-radius: 8px;
+      border: none;
+      margin-bottom: 20px;
+    }
+    button {
+      background: #ff4081;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 25px;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
-
-    .button:hover {
-      background: #e6c94d;
+    button:hover {
+      background: #ff79a7;
     }
-
-    .letter-box {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 30px;
-      border-radius: 12px;
-      margin-top: 40px;
-      font-size: 1.2em;
-      line-height: 1.8;
-      white-space: pre-line;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
-    }
-
-    audio {
-      display: none;
-    }
-
-    .footer {
-      margin-top: 60px;
-      font-size: 0.9em;
-      color: #aaa;
+    p {
+      color: #bbb;
+      font-size: 14px;
+      margin-top: 30px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>💌 InnerLetter</h1>
-    <p>Click the button to receive a letter written just for you.</p>
-    <button class="button" onclick="showLetter()">Read My Letter</button>
 
-    <div id="letter" class="letter-box" style="display: none;"></div>
-    <audio id="bg-music" autoplay loop>
-      <source src="https://cdn.pixabay.com/audio/2023/04/23/audio_5dc7a89a31.mp3" type="audio/mpeg">
-    </audio>
+  <h1>📥 Video Downloader</h1>
+  <input type="text" id="videoUrl" placeholder="Paste YouTube/TikTok/Facebook video URL" />
+  <br>
+  <button onclick="downloadVideo()">Download Now</button>
 
-    <div class="footer">A letter from somewhere between your past and your future ✨</div>
-  </div>
+  <p>We use external services like savefrom.net to download videos.</p>
 
   <script>
-    const letters = [
-      "Dear You,\n\nI know you're tired. I know the nights feel longer than they used to. But please hold on a little longer. What you cannot see now is becoming the foundation of your strongest self.\n\nThe version of you I'm writing from has found peace — and they are so proud of how far you’ve come.\n\nAlways,\nA future you",
-      "Hey,\n\nYou may feel unseen, but you’ve never been alone. Every tear you’ve cried planted something soft in the universe. That softness lives in your eyes now. Don’t hide it.\n\nLove,\nA soul who remembers you",
-      "To You,\n\nYou forgot how brave you are. You survived storms no one even saw. That quiet strength? It’s your superpower.\n\nStop chasing who you’re *supposed* to be. You're becoming someone better.\n\n— A Voice Inside You",
-      "Hello,\n\nYou may not recognize me. I'm the you that never gave up — not when they left, not when you broke, not even when hope felt embarrassing.\n\nI’m still here. Waiting.\n\nLet’s meet soon.\n\n— Your Unbroken Self",
-      "Dear Soul,\n\nWhat if you’re not lost? What if you’re just between chapters?\n\nKeep turning the page. The part where everything makes sense is closer than you think.\n\nWarmly,\nSomeone who sees your heart",
-      "To the Fighter,\n\nYou’ve carried so much. Pain, guilt, memories that refuse to fade.\n\nYou don’t have to hold it all forever. Let a little go today.\n\nBreathe.\n\nYou made it this far — that matters more than you know.",
-    ];
+    function downloadVideo() {
+      const url = document.getElementById("videoUrl").value.trim();
+      if (!url) {
+        alert("Please paste a video link.");
+        return;
+      }
 
-    function showLetter() {
-      const random = letters[Math.floor(Math.random() * letters.length)];
-      const letterBox = document.getElementById("letter");
-      letterBox.innerText = random;
-      letterBox.style.display = "block";
+      // Example with savefrom.net
+      window.open("https://en.savefrom.net/18/#url=" + encodeURIComponent(url), "_blank");
     }
   </script>
+
 </body>
 </html>
