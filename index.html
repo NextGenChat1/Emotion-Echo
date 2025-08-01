@@ -2,67 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Video Downloader</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meme Caption Generator</title>
   <style>
     body {
-      background: #121212;
+      background-color: #121212;
       color: #fff;
-      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 40px 20px;
+      font-family: sans-serif;
+      padding: 20px;
     }
     h1 {
-      color: #ff4081;
-      margin-bottom: 20px;
+      color: #00e676;
     }
-    input {
-      padding: 12px;
-      width: 80%;
-      max-width: 400px;
-      font-size: 18px;
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
       border-radius: 8px;
       border: none;
-      margin-bottom: 20px;
     }
-    button {
-      background: #ff4081;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 18px;
-      border-radius: 25px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #ff79a7;
-    }
-    p {
-      color: #bbb;
-      font-size: 14px;
-      margin-top: 30px;
+    canvas {
+      margin-top: 20px;
+      border: 2px solid #00e676;
     }
   </style>
 </head>
 <body>
 
-  <h1>📥 Video Downloader</h1>
-  <input type="text" id="videoUrl" placeholder="Paste YouTube/TikTok/Facebook video URL" />
-  <br>
-  <button onclick="downloadVideo()">Download Now</button>
+  <h1>🖼️ Meme Caption Generator</h1>
 
-  <p>We use external services like savefrom.net to download videos.</p>
+  <input type="file" id="imageUpload" accept="image/*" />
+  <br>
+  <input type="text" id="topText" placeholder="Top caption..." />
+  <input type="text" id="bottomText" placeholder="Bottom caption..." />
+  <br>
+  <button onclick="generateMeme()">Generate Meme</button>
+  <button onclick="downloadMeme()">Download Meme</button>
+
+  <br><br>
+  <canvas id="memeCanvas" width="500" height="500"></canvas>
 
   <script>
-    function downloadVideo() {
-      const url = document.getElementById("videoUrl").value.trim();
-      if (!url) {
-        alert("Please paste a video link.");
+    let image = new Image();
+
+    document.getElementById('imageUpload').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        image.onload = () => drawMeme();
+        image.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function drawMeme() {
+      const canvas = document.getElementById('memeCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Resize canvas to image
+      canvas.width = image.width;
+      canvas.height = image.height;
+
+      ctx.drawImage(image, 0, 0);
+
+      // Text settings
+      const topText = document.getElementById('topText').value;
+      const bottomText = document.getElementById('bottomText').value;
+      ctx.font = '40px Impact';
+      ctx.fillStyle = 'white';
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 3;
+      ctx.textAlign = 'center';
+
+      // Top text
+      ctx.fillText(topText.toUpperCase(), canvas.width / 2, 50);
+      ctx.strokeText(topText.toUpperCase(), canvas.width / 2, 50);
+
+      // Bottom text
+      ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, canvas.height - 20);
+      ctx.strokeText(bottomText.toUpperCase(), canvas.width / 2, canvas.height - 20);
+    }
+
+    function generateMeme() {
+      if (!image.src) {
+        alert("Pehle image upload karo!");
         return;
       }
+      drawMeme();
+    }
 
-      // Example with savefrom.net
-      window.open("https://en.savefrom.net/18/#url=" + encodeURIComponent(url), "_blank");
+    function downloadMeme() {
+      const canvas = document.getElementById('memeCanvas');
+      const link = document.createElement('a');
+      link.download = 'meme.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     }
   </script>
 
